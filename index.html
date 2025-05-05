@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Tonton Video & Dapat Reward</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: #f9f9f9; }
+    h2 { margin-bottom: 20px; }
+    iframe { border-radius: 12px; border: none; }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #00aaff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #aaa;
+    }
+  </style>
+  <script>
+    const videoIds = [
+      "dQw4w9WgXcQ",  // Video 1
+      "3JZ_D3ELwOQ",  // Video 2
+      "L_jWHffIx5E"   // Video 3
+    ];
+
+    let isWatched = false;
+    let timer;
+
+    function getRandomVideoId() {
+      const index = Math.floor(Math.random() * videoIds.length);
+      return videoIds[index];
+    }
+
+    function startWatching() {
+      const watchBtn = document.getElementById("watchButton");
+      const videoFrame = document.getElementById("videoFrame");
+      const videoId = getRandomVideoId();
+
+      // Load YouTube video
+      videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+
+      // Start 60-second countdown
+      watchBtn.disabled = true;
+      let seconds = 60;
+      watchBtn.textContent = `Menonton... (${seconds} detik)`;
+
+      timer = setInterval(() => {
+        seconds--;
+        watchBtn.textContent = `Menonton... (${seconds} detik)`;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          isWatched = true;
+          watchBtn.textContent = "✅ Klaim Reward";
+          watchBtn.disabled = false;
+          watchBtn.onclick = claimReward;
+        }
+      }, 1000);
+    }
+
+    function claimReward() {
+      if (isWatched) {
+        const reward = Math.floor(Math.random() * (25 - 10 + 1)) + 10;
+        alert(`🎉 Kamu mendapatkan Rp${reward}!\nReward akan ditambahkan ke saldo kamu.`);
+        // Di sini kamu bisa kirim request ke server/bot Telegram
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>🎬 Tonton Video Selama 1 Menit & Dapatkan Reward!</h2>
+  <iframe id="videoFrame" width="100%" height="315" allowfullscreen></iframe>
+  <br><br>
+  <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
+</body>
+</html>
