@@ -1,110 +1,128 @@
-
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>BigCat Mine - Tonton & Dapatkan Reward</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        iframe {
-            width: 100%;
-            max-width: 560px;
-            height: 315px;
-            border: none;
-            pointer-events: none;
-        }
-        #claimBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-top: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            display: none;
-        }
-        #status {
-            margin-top: 20px;
-        }
-    </style>
+  <title>BigCat Mine - Tugas Video</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; text-align: center; padding: 20px; }
+    iframe { width: 100%; max-width: 560px; height: 315px; border: none; margin-top: 20px; border-radius: 12px; }
+    .info { margin: 15px auto; font-size: 18px; }
+    #rewardBtn {
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    #rewardBtn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
-    <h2>🎥 Tonton Video & Klaim Reward</h2>
 
-    <iframe id="videoFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <h2>🎬 BigCat Mine - Tugas Video</h2>
+  <div class="info" id="status">Memuat video...</div>
+  <iframe id="player" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  <div class="info" id="countdown">⏳ 60 detik</div>
+  <button id="rewardBtn" disabled>✅ Dapatkan Reward</button>
 
-    <br>
-    <button id="claimBtn">🎁 Klaim Reward</button>
-    <div id="status"></div>
+  <script>
+    const videos = [
+      "dQw4w9WgXcQ", "kJQP7kiw5Fk", "3tmd-ClpJxA", "tgbNymZ7vqY",
+      "V-_O7nl0Ii0", "fdPVcHr6etE", "7QUtEmBT_-w", "CdX6euCZ5Bo",
+      "LsoLEjrDogU", "9bZkp7q19f0"
+    ];
 
-    <script>
-        const uid = new URLSearchParams(window.location.search).get("uid");
-        const videoFrame = document.getElementById("videoFrame");
-        const claimBtn = document.getElementById("claimBtn");
-        const statusDiv = document.getElementById("status");
+    let currentIndex = 0;
+    let countdown = 60;
+    let reward = getRandomReward();
+    let interval;
+    let player;
 
-        if (!uid) {
-            statusDiv.innerText = "❌ User ID tidak ditemukan.";
+    const iframe = document.getElementById("player");
+    const countdownEl = document.getElementById("countdown");
+    const statusEl = document.getElementById("status");
+    const rewardBtn = document.getElementById("rewardBtn");
+
+    function loadYouTubeAPI() {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScript = document.getElementsByTagName("script")[0];
+      firstScript.parentNode.insertBefore(tag, firstScript);
+    }
+
+    window.onYouTubeIframeAPIReady = function() {
+      player = new YT.Player("player", {
+        videoId: videos[currentIndex],
+        playerVars: { autoplay: 1, controls: 1, mute: 1 },
+        events: {
+          'onReady': startCountdown,
+          'onStateChange': onPlayerStateChange
         }
+      });
+    };
 
-        const videoIds = ["dQw4w9WgXcQ", "JGwWNGJdvx8", "hY7m5jjJ9mM", "kxopViU98Xo"];
-        let currentVideoIndex = 0;
-        let timer;
+    function startCountdown() {
+      statusEl.textContent = `🎯 Tonton video selama 60 detik untuk dapat Rp${reward}`;
+      countdown = 60;
+      rewardBtn.disabled = true;
 
-        function loadVideo(index) {
-            clearTimeout(timer);
-            claimBtn.style.display = "none";
-            claimBtn.disabled = false;
-            claimBtn.innerText = "🎁 Klaim Reward";
-            const videoId = videoIds[index];
-            videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0`;
-
-            timer = setTimeout(() => {
-                claimBtn.style.display = "inline-block";
-            }, 60000);
+      interval = setInterval(() => {
+        if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
+          countdown--;
+          countdownEl.textContent = `⏳ ${countdown} detik`;
+          if (countdown <= 0) {
+            clearInterval(interval);
+            rewardBtn.disabled = false;
+            countdownEl.textContent = "✅ Selesai! Klik untuk klaim.";
+            statusEl.textContent = `Kamu mendapatkan Rp${reward}`;
+          }
         }
+      }, 1000);
+    }
 
-        async function claimReward() {
-            claimBtn.disabled = true;
-            claimBtn.innerText = "Memproses...";
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+        clearInterval(interval);
+      } else if (event.data === YT.PlayerState.PLAYING && countdown > 0) {
+        clearInterval(interval); // restart interval to avoid duplicates
+        startCountdown();
+      }
+    }
 
-            const res = await fetch("/claim-reward", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ uid })
-            });
+    rewardBtn.onclick = () => {
+      alert(`🎉 Selamat! Kamu dapat Rp${reward}`);
+      rewardBtn.disabled = true;
+      nextVideo();
+    };
 
-            const result = await res.json();
-            if (result.status === "ok") {
-                statusDiv.innerText = result.message;
-                claimBtn.innerText = "✅ Reward Diberikan!";
-                currentVideoIndex++;
-                if (currentVideoIndex < videoIds.length) {
-                    setTimeout(() => {
-                        statusDiv.innerText = "";
-                        loadVideo(currentVideoIndex);
-                    }, 3000);
-                } else {
-                    statusDiv.innerText += "\n🎉 Semua misi selesai!";
-                    videoFrame.style.display = "none";
-                }
-            } else {
-                statusDiv.innerText = result.message || "❌ Terjadi kesalahan.";
-                claimBtn.innerText = "Gagal";
-            }
-        }
+    function nextVideo() {
+      currentIndex++;
+      if (currentIndex < videos.length) {
+        reward = getRandomReward();
+        countdown = 60;
+        countdownEl.textContent = "⏳ 60 detik";
+        player.loadVideoById(videos[currentIndex]);
+        statusEl.textContent = "Memuat video berikutnya...";
+      } else {
+        statusEl.textContent = "🎉 Semua tugas selesai!";
+        countdownEl.textContent = "";
+        rewardBtn.style.display = "none";
+      }
+    }
 
-        claimBtn.onclick = claimReward;
+    function getRandomReward() {
+      return Math.floor(Math.random() * 16) + 10; // Rp10 - Rp25
+    }
 
-        // Mulai dengan video pertama
-        loadVideo(currentVideoIndex);
-    </script>
+    loadYouTubeAPI();
+  </script>
+
 </body>
 </html>
