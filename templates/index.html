@@ -2,28 +2,81 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Tonton Video & Dapat Reward</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <title>Dapatkan Reward dari Iklan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* [Gaya sama seperti sebelumnya, tidak diubah] */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #00f7ff;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: #00f7ff;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #00c0cc;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🎬 Tonton Video Selama 1 Menit & Dapatkan Reward!</h2>
-    <div id="missionCount">Misi tersisa hari ini: 10</div>
-    <div id="player"></div>
-    <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
-  </div>
 
-  <!-- YouTube Iframe API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
+  <h1>🎁 Tonton Iklan & Dapatkan Reward</h1>
+  <button onclick="playRewardedAd()">Tonton Iklan Sekarang</button>
 
   <!-- Monetag SDK -->
   <script src='//whephiwums.com/sdk.js' data-zone='9293871' data-sdk='show_9293871'></script>
-  <script src="monetag.js"></script>
 
-  <!-- Main logic for video and reward -->
-  <script src="watch.js"></script>
+  <script>
+    function playRewardedAd() {
+      if (typeof show_9293871 === 'function') {
+        show_9293871().then(() => {
+          alert('🎉 Terima kasih! Reward Anda sudah siap.');
+          // Tambahkan fungsi untuk mengirim reward ke bot di sini (jika ingin integrasi Telegram WebApp)
+        }).catch(() => {
+          alert('❌ Iklan gagal dimuat. Coba lagi nanti.');
+        });
+      } else {
+        alert('❗ Iklan belum siap. Silakan refresh halaman.');
+      }
+    }
+
+    // Optional: Auto show interstitial ad saat halaman dibuka
+    if (typeof show_9293871 === 'function') {
+      show_9293871({
+        type: 'inApp',
+        inAppSettings: {
+          frequency: 2,
+          capping: 0.1,
+          interval: 30,
+          timeout: 5,
+          everyPage: false
+        }
+      });
+    }
+  </script>
+
 </body>
 </html>
