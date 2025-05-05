@@ -1,103 +1,121 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>BigCat Mine - Tonton & Dapatkan Reward</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        iframe {
-            width: 100%;
-            max-width: 560px;
-            height: 315px;
-            border: none;
-            pointer-events: none;
-        }
-        #claimBtn {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-top: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            display: none;
-        }
-        #videoList button {
-            margin: 5px;
-            padding: 10px 15px;
-        }
-        #status {
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>BigCat Mine - Tonton & Dapatkan Reward</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    iframe {
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
+      border: none;
+      pointer-events: none;
+    }
+    #claimBtn {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      display: none;
+    }
+    #status {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <h2>🎥 Pilih dan Tonton Video 1 Menit untuk Reward!</h2>
+  <h2>🎥 Tonton Video & Klaim Reward</h2>
 
-    <div id="videoList">
-        <button onclick="loadVideo('dQw4w9WgXcQ')">Video 1</button>
-        <button onclick="loadVideo('JGwWNGJdvx8')">Video 2</button>
-        <button onclick="loadVideo('hY7m5jjJ9mM')">Video 3</button>
-    </div>
+  <iframe
+    id="videoFrame"
+    src=""
+    allow="autoplay; encrypted-media"
+    allowfullscreen
+  ></iframe>
 
-    <iframe id="videoFrame" src="" allow="autoplay; encrypted-media" allowfullscreen style="display: none;"></iframe>
+  <br />
+  <button id="claimBtn">🎁 Klaim Reward</button>
+  <div id="status"></div>
 
-    <br>
-    <button id="claimBtn">🎁 Klaim Reward</button>
-    <div id="status"></div>
+  <script>
+    const uid = new URLSearchParams(window.location.search).get("uid");
+    const videoFrame = document.getElementById("videoFrame");
+    const claimBtn = document.getElementById("claimBtn");
+    const statusDiv = document.getElementById("status");
 
-    <script>
-        const uid = new URLSearchParams(window.location.search).get("uid");
-        const videoFrame = document.getElementById("videoFrame");
-        const claimBtn = document.getElementById("claimBtn");
-        const statusDiv = document.getElementById("status");
-        const videoList = document.getElementById("videoList");
+    if (!uid) {
+      statusDiv.innerText = "❌ User ID tidak ditemukan.";
+    }
 
-        if (!uid) {
-            statusDiv.innerText = "❌ User ID tidak ditemukan.";
+    const videoIds = [
+      "dQw4w9WgXcQ",
+      "JGwWNGJdvx8",
+      "hY7m5jjJ9mM",
+      "kxopViU98Xo"
+    ];
+    let currentVideoIndex = 0;
+    let timer;
+
+    function loadVideo(index) {
+      clearTimeout(timer);
+      claimBtn.style.display = "none";
+      claimBtn.disabled = false;
+      claimBtn.innerText = "🎁 Klaim Reward";
+
+      const videoId = videoIds[index];
+      videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0`;
+
+      timer = setTimeout(() => {
+        claimBtn.style.display = "inline-block";
+      }, 60000); // 1 menit
+    }
+
+    async function claimReward() {
+      claimBtn.disabled = true;
+      claimBtn.innerText = "Memproses...";
+
+      const res = await fetch("/claim-reward", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ uid })
+      });
+
+      const result = await res.json();
+      if (result.status === "ok") {
+        statusDiv.innerText = result.message;
+        claimBtn.innerText = "✅ Reward Diberikan!";
+        currentVideoIndex++;
+
+        if (currentVideoIndex < videoIds.length) {
+          setTimeout(() => {
+            statusDiv.innerText = "";
+            loadVideo(currentVideoIndex);
+          }, 3000); // jeda sebelum video berikutnya
+        } else {
+          statusDiv.innerText += "\n🎉 Semua misi selesai!";
+          videoFrame.style.display = "none";
         }
+      } else {
+        statusDiv.innerText = result.message || "❌ Terjadi kesalahan.";
+        claimBtn.innerText = "Gagal";
+      }
+    }
 
-        let timer;
+    claimBtn.onclick = claimReward;
 
-        function loadVideo(videoId) {
-            clearTimeout(timer); // Reset jika pindah video
-            videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0`;
-            videoFrame.style.display = "block";
-            claimBtn.style.display = "none";
-            claimBtn.disabled = false;
-            claimBtn.innerText = "🎁 Klaim Reward";
-
-            timer = setTimeout(() => {
-                claimBtn.style.display = "inline-block";
-            }, 60000); // 1 menit
-        }
-
-        claimBtn.onclick = async () => {
-            claimBtn.disabled = true;
-            claimBtn.innerText = "Memproses...";
-
-            const res = await fetch("/claim-reward", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ uid })
-            });
-
-            const result = await res.json();
-            if (result.status === "ok") {
-                statusDiv.innerText = result.message;
-                claimBtn.innerText = "✅ Reward Diberikan!";
-            } else {
-                statusDiv.innerText = result.message || "❌ Terjadi kesalahan.";
-                claimBtn.innerText = "Gagal";
-            }
-        };
-    </script>
+    // Mulai dari video pertama
+    loadVideo(currentVideoIndex);
+  </script>
 </body>
 </html>
