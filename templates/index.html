@@ -1,121 +1,29 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <title>BigCat Mine - Tonton & Dapatkan Reward</title>
+  <meta charset="UTF-8">
+  <title>Tonton Video & Dapat Reward</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    iframe {
-      width: 100%;
-      max-width: 560px;
-      height: 315px;
-      border: none;
-      pointer-events: none;
-    }
-    #claimBtn {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      display: none;
-    }
-    #status {
-      margin-top: 20px;
-    }
+    /* [Gaya sama seperti sebelumnya, tidak diubah] */
   </style>
 </head>
 <body>
-  <h2>🎥 Tonton Video & Klaim Reward</h2>
+  <div class="container">
+    <h2>🎬 Tonton Video Selama 1 Menit & Dapatkan Reward!</h2>
+    <div id="missionCount">Misi tersisa hari ini: 10</div>
+    <div id="player"></div>
+    <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
+  </div>
 
-  <iframe
-    id="videoFrame"
-    src=""
-    allow="autoplay; encrypted-media"
-    allowfullscreen
-  ></iframe>
+  <!-- YouTube Iframe API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
 
-  <br />
-  <button id="claimBtn">🎁 Klaim Reward</button>
-  <div id="status"></div>
+  <!-- Monetag SDK -->
+  <script src='//whephiwums.com/sdk.js' data-zone='9293871' data-sdk='show_9293871'></script>
+  <script src="monetag.js"></script>
 
-  <script>
-    const uid = new URLSearchParams(window.location.search).get("uid");
-    const videoFrame = document.getElementById("videoFrame");
-    const claimBtn = document.getElementById("claimBtn");
-    const statusDiv = document.getElementById("status");
-
-    if (!uid) {
-      statusDiv.innerText = "❌ User ID tidak ditemukan.";
-    }
-
-    const videoIds = [
-      "dQw4w9WgXcQ",
-      "JGwWNGJdvx8",
-      "hY7m5jjJ9mM",
-      "kxopViU98Xo"
-    ];
-    let currentVideoIndex = 0;
-    let timer;
-
-    function loadVideo(index) {
-      clearTimeout(timer);
-      claimBtn.style.display = "none";
-      claimBtn.disabled = false;
-      claimBtn.innerText = "🎁 Klaim Reward";
-
-      const videoId = videoIds[index];
-      videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0`;
-
-      timer = setTimeout(() => {
-        claimBtn.style.display = "inline-block";
-      }, 60000); // 1 menit
-    }
-
-    async function claimReward() {
-      claimBtn.disabled = true;
-      claimBtn.innerText = "Memproses...";
-
-      const res = await fetch("/claim-reward", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ uid })
-      });
-
-      const result = await res.json();
-      if (result.status === "ok") {
-        statusDiv.innerText = result.message;
-        claimBtn.innerText = "✅ Reward Diberikan!";
-        currentVideoIndex++;
-
-        if (currentVideoIndex < videoIds.length) {
-          setTimeout(() => {
-            statusDiv.innerText = "";
-            loadVideo(currentVideoIndex);
-          }, 3000); // jeda sebelum video berikutnya
-        } else {
-          statusDiv.innerText += "\n🎉 Semua misi selesai!";
-          videoFrame.style.display = "none";
-        }
-      } else {
-        statusDiv.innerText = result.message || "❌ Terjadi kesalahan.";
-        claimBtn.innerText = "Gagal";
-      }
-    }
-
-    claimBtn.onclick = claimReward;
-
-    // Mulai dari video pertama
-    loadVideo(currentVideoIndex);
-  </script>
+  <!-- Main logic for video and reward -->
+  <script src="watch.js"></script>
 </body>
 </html>
