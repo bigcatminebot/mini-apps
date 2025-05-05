@@ -3,7 +3,7 @@ from flask import Flask, request, render_template, jsonify
 import threading
 import telebot
 
-API_TOKEN = "YOUR_BOT_TOKEN_HERE"  # Ganti dengan token kamu
+API_TOKEN = "7148397099:AAFIqHsRJ4OAJ5_RGHNUBQ5BT5aE3a5HPAM"  # Ganti dengan token kamu
 bot = telebot.TeleBot(API_TOKEN)
 app = Flask(__name__)
 DB = "database.db"
@@ -74,3 +74,56 @@ if __name__ == "__main__":
     init_db()
     threading.Thread(target=run_bot).start()
     app.run(host="0.0.0.0", port=5000)
+
+
+@bot.message_handler(func=lambda msg: msg.text.startswith("#withdraw"))
+def withdraw(message):
+    try:
+        amount = int(message.text.split()[1])
+        telegram_id = str(message.from_user.id)
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+        c.execute("SELECT saldo FROM users WHERE telegram_id = ?", (telegram_id,))
+        result = c.fetchone()
+        if result and result[0] >= amount and amount >= 1:
+            new_saldo = result[0] - amount
+            c.execute("UPDATE users SET saldo = ? WHERE telegram_id = ?", (new_saldo, telegram_id))
+            c.execute("INSERT INTO withdrawals (telegram_id, amount, status) VALUES (?, ?, ?)", (telegram_id, amount, "pending"))
+            conn.commit()
+            bot.reply_to(message, f"✅ Permintaan withdraw Rp{amount} dikirim ke admin. Tunggu konfirmasi.")
+        else:
+            bot.reply_to(message, "❌ Saldo tidak cukup atau jumlah tidak valid (min Rp1).")
+        conn.close()
+    except:
+        bot.reply_to(message, "⚠️ Format salah. Gunakan: #withdraw 1000")
+
+@bot.message_handler(commands=['admin_withdraws'])
+def admin_list_withdraws(message):
+    if str(message.from_user.id) != "YOUR_ADMIN_ID":  # Ganti dengan ID admin kamu
+        return
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT id, telegram_id, amount FROM withdrawals WHERE status = 'pending'")
+    rows = c.fetchall()
+    conn.close()
+    if rows:
+        msg = "\n".join([f"ID: {r[0]} | User: {r[1]} | Rp{r[2]}" for r in rows])
+        bot.reply_to(message, f"📋 Withdraw pending:\n{msg}\nGunakan /confirm_withdraw <id>")
+    else:
+        bot.reply_to(message, "✅ Tidak ada withdraw pending.")
+
+@bot.message_handler(commands=['confirm_withdraw'])
+def confirm_withdraw(message):
+    if str(message.from_user.id) != "YOUR_ADMIN_ID":
+        return
+    try:
+        wid = int(message.text.split()[1])
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+        c.execute("UPDATE withdrawals SET status = 'confirmed' WHERE id = ?", (wid,))
+        conn.commit()
+        conn.close()
+        bot.reply_to(message, f"✅ Withdraw ID {wid} dikonfirmasi.")
+    except:
+        bot.reply_to(message, "⚠️ Format salah. Gunakan: /confirm_withdraw <id>")
+
