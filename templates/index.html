@@ -26,26 +26,52 @@
     const telegramId = telegram.initDataUnsafe.user?.id || prompt("Masukkan Telegram ID:");
 
     const videos = [
-      "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      "https://www.youtube.com/embed/kJQP7kiw5Fk",
-      "https://www.youtube.com/embed/3tmd-ClpJxA"
+      "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&modestbranding=1&controls=0",
+      "https://www.youtube.com/embed/kJQP7kiw5Fk?autoplay=1&mute=1&modestbranding=1&controls=0",
+      "https://www.youtube.com/embed/3tmd-ClpJxA?autoplay=1&mute=1&modestbranding=1&controls=0"
     ];
 
     let index = 0;
     let rewardAmount = 10;
+    let player;
+    let countdownInterval;
+    let videoPlaying = false;
 
-    const player = document.getElementById("player");
     const status = document.getElementById("status");
     const nextBtn = document.getElementById("nextBtn");
 
-    function playVideo(i) {
-      player.src = videos[i] + "?autoplay=1&modestbranding=1&controls=0";
-      nextBtn.disabled = true;
-      status.textContent = "⏳ Tonton video hingga selesai (1 menit)...";
+    // Load YouTube API
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player("player", {
+        videoId: videos[index].split("/")[4], // Extract video ID
+        events: {
+          onStateChange: onPlayerStateChange
+        }
+      });
+    }
 
-      setTimeout(() => {
-        rewardUser();
-      }, 60000); // 1 menit
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        videoPlaying = true;
+        startCountdown();
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        videoPlaying = false;
+        clearInterval(countdownInterval);
+        status.textContent = "⏸️ Video dijeda, countdown berhenti.";
+      }
+    }
+
+    function startCountdown() {
+      let timeLeft = 60; // 60 seconds for each video
+      countdownInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+          rewardUser();
+          clearInterval(countdownInterval);
+        } else {
+          status.textContent = `⏳ Menonton video: ${timeLeft}s tersisa...`;
+          timeLeft--;
+        }
+      }, 1000);
     }
 
     function rewardUser() {
@@ -57,7 +83,7 @@
       .then(res => res.json())
       .then(res => {
         if (res.status === "success") {
-          status.textContent = `✅ Kamu mendapatkan Rp${rewardAmount}!`; 
+          status.textContent = `✅ Kamu mendapatkan Rp${rewardAmount}!`;
           nextBtn.disabled = false;
         } else {
           status.textContent = "❌ Gagal memberi reward.";
@@ -69,14 +95,23 @@
       index++;
       rewardAmount = 15 + Math.floor(Math.random() * 11); // 15 - 25
       if (index < videos.length) {
-        playVideo(index);
+        player.loadVideoById(videos[index].split("/")[4]); // Load next video
+        status.textContent = "⏳ Menonton video...";
+        nextBtn.disabled = true;
       } else {
         status.textContent = "🎉 Semua video selesai!";
         nextBtn.disabled = true;
       }
+    };
+
+    function init() {
+      // Load YouTube iframe API
+      const script = document.createElement("script");
+      script.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(script);
     }
 
-    playVideo(index);
+    init();
   </script>
 </body>
 </html>
