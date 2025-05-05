@@ -34,16 +34,10 @@
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     const videoIds = [
-      "pw4LdlA9bkU",
-      "xDAZZW5Kbiw",
-      "3L4Qcq07LCY",
-      "6Y_VaEjhCG0E",
-    "xDAZZW5Kbiw",
-    "tFXamlMwbqY",
-    "pw4LdlA9bkU",
-    "1nj9_hMuvlk",
-    "cS_TtyMvTMs",
-    "MzKpGbYFhhc"
+      "pw4LdlA9bkU", "xDAZZW5Kbiw", "3L4Qcq07LCY",
+      "6Y_VaEjhCG0E", "xDAZZW5Kbiw", "tFXamlMwbqY",
+      "pw4LdlA9bkU", "1nj9_hMuvlk", "cS_TtyMvTMs",
+      "MzKpGbYFhhc"
     ];
 
     let player;
@@ -68,14 +62,20 @@
     }
 
     function onYouTubeIframeAPIReady() {
+      const initialVideo = getRandomVideoId(); // ⬅️ ambil video pertama
       player = new YT.Player('player', {
         height: '315',
         width: '100%',
-        videoId: '',
+        videoId: initialVideo,
         events: {
+          'onReady': onPlayerReady,
           'onStateChange': onPlayerStateChange
         }
       });
+    }
+
+    function onPlayerReady(event) {
+      player.mute(); // ⬅️ mute agar autoplay diperbolehkan
     }
 
     function startWatching() {
@@ -88,7 +88,9 @@
       document.getElementById("watchButton").disabled = true;
       document.getElementById("watchButton").textContent = `Menonton... (${countdown} detik)`;
 
+      player.mute(); // ⬅️ pastikan mute dulu
       player.loadVideoById(videoId);
+      player.playVideo(); // ⬅️ paksa play
     }
 
     function onPlayerStateChange(event) {
@@ -128,7 +130,6 @@
       updateMissionCount();
 
       if (completed < dailyLimit) {
-        // Siapkan video selanjutnya
         document.getElementById("watchButton").textContent = "Tonton Misi Berikutnya";
         document.getElementById("watchButton").onclick = startWatching;
       } else {
@@ -137,7 +138,6 @@
       }
     }
 
-    // Inisialisasi tampilan misi
     updateMissionCount();
   </script>
 </body>
