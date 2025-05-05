@@ -18,7 +18,7 @@ def init_db():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return templates("index.html")
 
 @app.route("/claim-reward", methods=["POST"])
 def claim_reward():
