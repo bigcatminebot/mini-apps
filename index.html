@@ -9,7 +9,6 @@
       box-sizing: border-box;
     }
 
-    /* Styling untuk body */
     body {
       margin: 0;
       padding: 0;
@@ -17,10 +16,6 @@
       background: linear-gradient(to right, #f0f4ff, #e4f7ff);
       text-align: center;
       color: #333;
-      display: flex;
-      justify-content: center; /* Menempatkan konten di tengah secara horizontal */
-      align-items: center; /* Menempatkan konten di tengah secara vertikal */
-      height: 100vh; /* Membuat body mengisi seluruh layar */
     }
 
     h2 {
@@ -37,16 +32,14 @@
     }
 
     #player {
-      width: 100%;
       max-width: 720px;
       margin: 0 auto;
-      height: 405px;
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      height: 315px; /* Pastikan player memiliki height */
     }
 
-    /* Styling untuk tombol */
     button {
       margin-top: 25px;
       padding: 14px 28px;
@@ -59,7 +52,6 @@
       cursor: pointer;
       transition: background 0.3s, transform 0.2s;
       box-shadow: 0 4px 12px rgba(0, 170, 255, 0.4);
-      align-self: center; /* Pastikan tombol tetap di tengah */
     }
 
     button:hover:not(:disabled) {
@@ -124,7 +116,7 @@
     function onYouTubeIframeAPIReady() {
       const initialVideo = getRandomVideoId();
       player = new YT.Player('player', {
-        height: '405',
+        height: '315',
         width: '100%',
         videoId: initialVideo,
         events: {
@@ -135,7 +127,7 @@
     }
 
     function onPlayerReady(event) {
-      player.mute();
+      player.mute(); // mute before starting video
     }
 
     function startWatching() {
@@ -148,7 +140,7 @@
       document.getElementById("watchButton").disabled = true;
       document.getElementById("watchButton").textContent = `Menonton... (${countdown} detik)`;
 
-      player.mute();
+      player.mute();  // mute before loading video
       player.loadVideoById(videoId);
       player.playVideo();
     }
