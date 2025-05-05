@@ -14,44 +14,61 @@
       padding: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(to right, #f0f4ff, #e4f7ff);
-      text-align: center;
       color: #333;
     }
 
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+
     h2 {
-      margin-top: 30px;
       font-size: 24px;
       font-weight: 600;
       color: #005b96;
+      margin-bottom: 10px;
     }
 
     #missionCount {
-      margin: 10px 0 20px;
       font-size: 18px;
+      margin-bottom: 25px;
       color: #333;
     }
 
     #player {
+      width: 100%;
       max-width: 720px;
-      margin: 0 auto;
+      height: 405px;
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      height: 315px; /* Pastikan player memiliki height */
+    }
+
+    .button-wrapper {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 720px;
     }
 
     button {
-      margin-top: 25px;
-      padding: 14px 28px;
+      padding: 14px 32px;
       font-size: 16px;
       font-weight: 600;
       background: linear-gradient(to right, #00aaff, #00d4ff);
       color: white;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       cursor: pointer;
       transition: background 0.3s, transform 0.2s;
       box-shadow: 0 4px 12px rgba(0, 170, 255, 0.4);
+      width: 100%;
     }
 
     button:hover:not(:disabled) {
@@ -67,23 +84,25 @@
 
     @media (max-width: 768px) {
       #player {
-        width: 95%;
         height: auto;
       }
 
       button {
-        width: 90%;
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <h2>🎬 Tonton Video Selama 1 Menit & Dapatkan Reward!</h2>
-  <div id="missionCount">Misi tersisa hari ini: 10</div>
-  <div id="player"></div>
-  <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
+  <div class="container">
+    <h2>🎬 Tonton Video Selama 1 Menit & Dapatkan Reward!</h2>
+    <div id="missionCount">Misi tersisa hari ini: 10</div>
+    <div id="player"></div>
+    <div class="button-wrapper">
+      <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
+    </div>
+  </div>
 
-  <!-- YouTube Iframe API -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     const videoIds = [
@@ -116,7 +135,7 @@
     function onYouTubeIframeAPIReady() {
       const initialVideo = getRandomVideoId();
       player = new YT.Player('player', {
-        height: '315',
+        height: '405',
         width: '100%',
         videoId: initialVideo,
         events: {
@@ -127,7 +146,7 @@
     }
 
     function onPlayerReady(event) {
-      player.mute(); // mute before starting video
+      player.mute();
     }
 
     function startWatching() {
@@ -137,10 +156,11 @@
       countdown = 60;
       isWatched = false;
       isCounting = false;
-      document.getElementById("watchButton").disabled = true;
-      document.getElementById("watchButton").textContent = `Menonton... (${countdown} detik)`;
+      const button = document.getElementById("watchButton");
+      button.disabled = true;
+      button.textContent = `Menonton... (${countdown} detik)`;
 
-      player.mute();  // mute before loading video
+      player.mute();
       player.loadVideoById(videoId);
       player.playVideo();
     }
