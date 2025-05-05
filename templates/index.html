@@ -1,121 +1,82 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>BigCat Mine - Tonton & Dapatkan Reward</title>
+  <title>BigCat Mine - Watch & Earn</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    iframe {
-      width: 100%;
-      max-width: 560px;
-      height: 315px;
-      border: none;
-      pointer-events: none;
-    }
-    #claimBtn {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin-top: 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      display: none;
-    }
-    #status {
-      margin-top: 20px;
-    }
+    body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; text-align: center; }
+    #video-container { max-width: 100%; margin: auto; }
+    #status { margin-top: 20px; font-size: 1.2em; }
+    iframe { width: 100%; max-width: 500px; height: 280px; border-radius: 12px; border: none; }
+    button { margin-top: 20px; padding: 12px 24px; font-size: 16px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
   </style>
 </head>
 <body>
-  <h2>🎥 Tonton Video & Klaim Reward</h2>
-
-  <iframe
-    id="videoFrame"
-    src=""
-    allow="autoplay; encrypted-media"
-    allowfullscreen
-  ></iframe>
-
-  <br />
-  <button id="claimBtn">🎁 Klaim Reward</button>
-  <div id="status"></div>
+  <h2>🎥 Tonton Video & Dapatkan Reward</h2>
+  <div id="video-container">
+    <iframe id="player" src="" allowfullscreen></iframe>
+  </div>
+  <div id="status">⏳ Menonton video...</div>
+  <button id="nextBtn" disabled>Video Selanjutnya</button>
 
   <script>
-    const uid = new URLSearchParams(window.location.search).get("uid");
-    const videoFrame = document.getElementById("videoFrame");
-    const claimBtn = document.getElementById("claimBtn");
-    const statusDiv = document.getElementById("status");
+    const telegram = window.Telegram.WebApp;
+    const telegramId = telegram.initDataUnsafe.user?.id || prompt("Masukkan Telegram ID:");
 
-    if (!uid) {
-      statusDiv.innerText = "❌ User ID tidak ditemukan.";
-    }
-
-    const videoIds = [
-      "dQw4w9WgXcQ",
-      "JGwWNGJdvx8",
-      "hY7m5jjJ9mM",
-      "kxopViU98Xo"
+    const videos = [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "https://www.youtube.com/embed/kJQP7kiw5Fk",
+      "https://www.youtube.com/embed/3tmd-ClpJxA"
     ];
-    let currentVideoIndex = 0;
-    let timer;
 
-    function loadVideo(index) {
-      clearTimeout(timer);
-      claimBtn.style.display = "none";
-      claimBtn.disabled = false;
-      claimBtn.innerText = "🎁 Klaim Reward";
+    let index = 0;
+    let rewardAmount = 10;
 
-      const videoId = videoIds[index];
-      videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&rel=0`;
+    const player = document.getElementById("player");
+    const status = document.getElementById("status");
+    const nextBtn = document.getElementById("nextBtn");
 
-      timer = setTimeout(() => {
-        claimBtn.style.display = "inline-block";
+    function playVideo(i) {
+      player.src = videos[i] + "?autoplay=1&modestbranding=1&controls=0";
+      nextBtn.disabled = true;
+      status.textContent = "⏳ Tonton video hingga selesai (1 menit)...";
+
+      setTimeout(() => {
+        rewardUser();
       }, 60000); // 1 menit
     }
 
-    async function claimReward() {
-      claimBtn.disabled = true;
-      claimBtn.innerText = "Memproses...";
-
-      const res = await fetch("/claim-reward", {
+    function rewardUser() {
+      fetch("/reward", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ uid })
-      });
-
-      const result = await res.json();
-      if (result.status === "ok") {
-        statusDiv.innerText = result.message;
-        claimBtn.innerText = "✅ Reward Diberikan!";
-        currentVideoIndex++;
-
-        if (currentVideoIndex < videoIds.length) {
-          setTimeout(() => {
-            statusDiv.innerText = "";
-            loadVideo(currentVideoIndex);
-          }, 3000); // jeda sebelum video berikutnya
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telegram_id: telegramId, amount: rewardAmount })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "success") {
+          status.textContent = `✅ Kamu mendapatkan Rp${rewardAmount}!`; 
+          nextBtn.disabled = false;
         } else {
-          statusDiv.innerText += "\n🎉 Semua misi selesai!";
-          videoFrame.style.display = "none";
+          status.textContent = "❌ Gagal memberi reward.";
         }
+      });
+    }
+
+    nextBtn.onclick = () => {
+      index++;
+      rewardAmount = 15 + Math.floor(Math.random() * 11); // 15 - 25
+      if (index < videos.length) {
+        playVideo(index);
       } else {
-        statusDiv.innerText = result.message || "❌ Terjadi kesalahan.";
-        claimBtn.innerText = "Gagal";
+        status.textContent = "🎉 Semua video selesai!";
+        nextBtn.disabled = true;
       }
     }
 
-    claimBtn.onclick = claimReward;
-
-    // Mulai dari video pertama
-    loadVideo(currentVideoIndex);
+    playVideo(index);
   </script>
 </body>
 </html>
