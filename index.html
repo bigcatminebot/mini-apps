@@ -32,8 +32,10 @@
     }
 
     #player {
+      width: 100%;
       max-width: 720px;
       margin: 0 auto;
+      height: 405px; /* Menetapkan tinggi player untuk tampilan optimal */
       border-radius: 16px;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
@@ -115,7 +117,7 @@
     function onYouTubeIframeAPIReady() {
       const initialVideo = getRandomVideoId();
       player = new YT.Player('player', {
-        height: '315',
+        height: '405', // Menetapkan tinggi yang sesuai
         width: '100%',
         videoId: initialVideo,
         events: {
@@ -126,7 +128,7 @@
     }
 
     function onPlayerReady(event) {
-      player.mute();
+      player.mute(); // Memastikan video di-mute sebelum dimulai
     }
 
     function startWatching() {
@@ -139,9 +141,9 @@
       document.getElementById("watchButton").disabled = true;
       document.getElementById("watchButton").textContent = `Menonton... (${countdown} detik)`;
 
-      player.mute();
+      player.mute(); // Pastikan video dimulai dalam mode mute
       player.loadVideoById(videoId);
-      player.playVideo();
+      player.playVideo(); // Memulai video
     }
 
     function onPlayerStateChange(event) {
@@ -191,6 +193,7 @@
       }
     }
 
+    // Memastikan misi tetap ter-update
     updateMissionCount();
   </script>
 </body>
