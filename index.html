@@ -174,7 +174,7 @@
     function claimReward() {
       if (!isWatched || completed >= dailyLimit) return;
 
-      const reward = Math.floor(Math.random() * (20 - 10 + 1)) + 10;
+      const reward = Math.floor(Math.random() * (15 - 10 + 1)) + 10;
       alert(`🎉 Kamu mendapatkan Rp${reward}!\nSilahkan screenshot halaman ini untuk melakukan penarikan!.`);
 
       completed++;
