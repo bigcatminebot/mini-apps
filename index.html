@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BigCat Mine - Watch & Earn</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; text-align: center; }
+    #video-container { max-width: 100%; margin: auto; }
+    #status { margin-top: 20px; font-size: 1.2em; }
+    iframe { width: 100%; max-width: 500px; height: 280px; border-radius: 12px; border: none; }
+    button { margin-top: 20px; padding: 12px 24px; font-size: 16px; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <h2>🎥 Tonton Video & Dapatkan Reward</h2>
+  <div id="video-container">
+    <iframe id="player" src="" allowfullscreen></iframe>
+  </div>
+  <div id="status">⏳ Menonton video...</div>
+  <button id="nextBtn" disabled>Video Selanjutnya</button>
+
+  <script>
+    const telegram = window.Telegram.WebApp;
+    const telegramId = telegram.initDataUnsafe.user?.id || prompt("Masukkan Telegram ID:");
+
+    const videos = [
+      "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&modestbranding=1&controls=0",
+      "https://www.youtube.com/embed/kJQP7kiw5Fk?autoplay=1&mute=1&modestbranding=1&controls=0",
+      "https://www.youtube.com/embed/3tmd-ClpJxA?autoplay=1&mute=1&modestbranding=1&controls=0"
+    ];
+
+    let index = 0;
+    let rewardAmount = 10;
+    let player;
+    let countdownInterval;
+    let videoPlaying = false;
+
+    const status = document.getElementById("status");
+    const nextBtn = document.getElementById("nextBtn");
+
+    // Load YouTube API
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player("player", {
+        videoId: videos[index].split("/")[4], // Extract video ID
+        events: {
+          onStateChange: onPlayerStateChange
+        }
+      });
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        videoPlaying = true;
+        startCountdown();
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        videoPlaying = false;
+        clearInterval(countdownInterval);
+        status.textContent = "⏸️ Video dijeda, countdown berhenti.";
+      } else if (event.data === YT.PlayerState.ENDED) {
+        videoPlaying = false;
+        rewardUser();
+      }
+    }
+
+    function startCountdown() {
+      let timeLeft = 60; // 60 seconds for each video
+      countdownInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+          rewardUser();
+          clearInterval(countdownInterval);
+        } else {
+          status.textContent = `⏳ Menonton video: ${timeLeft}s tersisa...`;
+          timeLeft--;
+        }
+      }, 1000);
+    }
+
+    function rewardUser() {
+      fetch("/reward", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ telegram_id: telegramId, amount: rewardAmount })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.status === "success") {
+          status.textContent = `✅ Kamu mendapatkan Rp${rewardAmount}!`;
+          nextBtn.disabled = false;
+        } else {
+          status.textContent = "❌ Gagal memberi reward.";
+        }
+      });
+    }
+
+    nextBtn.onclick = () => {
+      index++;
+      rewardAmount = 15 + Math.floor(Math.random() * 11); // 15 - 25
+      if (index < videos.length) {
+        player.loadVideoById(videos[index].split("/")[4]); // Load next video
+        status.textContent = "⏳ Menonton video...";
+        nextBtn.disabled = true;
+      } else {
+        status.textContent = "🎉 Semua video selesai!";
+        nextBtn.disabled = true;
+      }
+    };
+
+    function init() {
+      // Load YouTube iframe API
+      const script = document.createElement("script");
+      script.src = "https://www.youtube.com/iframe_api";
+      document.body.appendChild(script);
+    }
+
+    init();
+  </script>
+</body>
+</html>
