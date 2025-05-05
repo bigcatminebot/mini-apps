@@ -1,128 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>BigCat Mine - Tugas Video</title>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tonton Video & Dapat Reward</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; text-align: center; padding: 20px; }
-    iframe { width: 100%; max-width: 560px; height: 315px; border: none; margin-top: 20px; border-radius: 12px; }
-    .info { margin: 15px auto; font-size: 18px; }
-    #rewardBtn {
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: #f9f9f9; }
+    h2 { margin-bottom: 20px; }
+    iframe { border-radius: 12px; border: none; }
+    button {
       padding: 12px 24px;
       font-size: 16px;
-      background-color: #28a745;
+      background-color: #00aaff;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 15px;
     }
-    #rewardBtn:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
+    button:disabled {
+      background-color: #aaa;
     }
   </style>
-</head>
-<body>
-
-  <h2>🎬 BigCat Mine - Tugas Video</h2>
-  <div class="info" id="status">Memuat video...</div>
-  <iframe id="player" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  <div class="info" id="countdown">⏳ 60 detik</div>
-  <button id="rewardBtn" disabled>✅ Dapatkan Reward</button>
-
   <script>
-    const videos = [
-      "dQw4w9WgXcQ", "kJQP7kiw5Fk", "3tmd-ClpJxA", "tgbNymZ7vqY",
-      "V-_O7nl0Ii0", "fdPVcHr6etE", "7QUtEmBT_-w", "CdX6euCZ5Bo",
-      "LsoLEjrDogU", "9bZkp7q19f0"
+    const videoIds = [
+      "dQw4w9WgXcQ",  // Video 1
+      "3JZ_D3ELwOQ",  // Video 2
+      "L_jWHffIx5E"   // Video 3
     ];
 
-    let currentIndex = 0;
-    let countdown = 60;
-    let reward = getRandomReward();
-    let interval;
-    let player;
+    let isWatched = false;
+    let timer;
 
-    const iframe = document.getElementById("player");
-    const countdownEl = document.getElementById("countdown");
-    const statusEl = document.getElementById("status");
-    const rewardBtn = document.getElementById("rewardBtn");
-
-    function loadYouTubeAPI() {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScript = document.getElementsByTagName("script")[0];
-      firstScript.parentNode.insertBefore(tag, firstScript);
+    function getRandomVideoId() {
+      const index = Math.floor(Math.random() * videoIds.length);
+      return videoIds[index];
     }
 
-    window.onYouTubeIframeAPIReady = function() {
-      player = new YT.Player("player", {
-        videoId: videos[currentIndex],
-        playerVars: { autoplay: 1, controls: 1, mute: 1 },
-        events: {
-          'onReady': startCountdown,
-          'onStateChange': onPlayerStateChange
-        }
-      });
-    };
+    function startWatching() {
+      const watchBtn = document.getElementById("watchButton");
+      const videoFrame = document.getElementById("videoFrame");
+      const videoId = getRandomVideoId();
 
-    function startCountdown() {
-      statusEl.textContent = `🎯 Tonton video selama 60 detik untuk dapat Rp${reward}`;
-      countdown = 60;
-      rewardBtn.disabled = true;
+      // Load YouTube video
+      videoFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
 
-      interval = setInterval(() => {
-        if (player && player.getPlayerState() === YT.PlayerState.PLAYING) {
-          countdown--;
-          countdownEl.textContent = `⏳ ${countdown} detik`;
-          if (countdown <= 0) {
-            clearInterval(interval);
-            rewardBtn.disabled = false;
-            countdownEl.textContent = "✅ Selesai! Klik untuk klaim.";
-            statusEl.textContent = `Kamu mendapatkan Rp${reward}`;
-          }
+      // Start 60-second countdown
+      watchBtn.disabled = true;
+      let seconds = 60;
+      watchBtn.textContent = `Menonton... (${seconds} detik)`;
+
+      timer = setInterval(() => {
+        seconds--;
+        watchBtn.textContent = `Menonton... (${seconds} detik)`;
+        if (seconds <= 0) {
+          clearInterval(timer);
+          isWatched = true;
+          watchBtn.textContent = "✅ Klaim Reward";
+          watchBtn.disabled = false;
+          watchBtn.onclick = claimReward;
         }
       }, 1000);
     }
 
-    function onPlayerStateChange(event) {
-      if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
-        clearInterval(interval);
-      } else if (event.data === YT.PlayerState.PLAYING && countdown > 0) {
-        clearInterval(interval); // restart interval to avoid duplicates
-        startCountdown();
+    function claimReward() {
+      if (isWatched) {
+        const reward = Math.floor(Math.random() * (25 - 10 + 1)) + 10;
+        alert(`🎉 Kamu mendapatkan Rp${reward}!\nReward akan ditambahkan ke saldo kamu.`);
+        // Di sini kamu bisa kirim request ke server/bot Telegram
       }
     }
-
-    rewardBtn.onclick = () => {
-      alert(`🎉 Selamat! Kamu dapat Rp${reward}`);
-      rewardBtn.disabled = true;
-      nextVideo();
-    };
-
-    function nextVideo() {
-      currentIndex++;
-      if (currentIndex < videos.length) {
-        reward = getRandomReward();
-        countdown = 60;
-        countdownEl.textContent = "⏳ 60 detik";
-        player.loadVideoById(videos[currentIndex]);
-        statusEl.textContent = "Memuat video berikutnya...";
-      } else {
-        statusEl.textContent = "🎉 Semua tugas selesai!";
-        countdownEl.textContent = "";
-        rewardBtn.style.display = "none";
-      }
-    }
-
-    function getRandomReward() {
-      return Math.floor(Math.random() * 16) + 10; // Rp10 - Rp25
-    }
-
-    loadYouTubeAPI();
   </script>
-
+</head>
+<body>
+  <h2>🎬 Tonton Video Selama 1 Menit & Dapatkan Reward!</h2>
+  <iframe id="videoFrame" width="100%" height="315" allowfullscreen></iframe>
+  <br><br>
+  <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
 </body>
 </html>
