@@ -2,205 +2,115 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard Mining</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halaman dengan Header Fixed</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
     }
+
     body {
       margin: 0;
+      padding: 0;
       font-family: 'Poppins', sans-serif;
-      display: flex;
-      background: #0f172a;
-      color: #f8fafc;
+      background: #f4f4f9;
+      color: #333;
     }
-    .sidebar {
-      width: 220px;
-      background: #1e293b;
-      padding: 20px;
-      height: 100vh;
-    }
-    .sidebar h2 {
-      font-size: 18px;
-      margin-bottom: 30px;
-    }
-    .sidebar a {
-      display: block;
-      color: #cbd5e1;
-      text-decoration: none;
-      margin-bottom: 15px;
-      transition: 0.2s;
-    }
-    .sidebar a:hover {
-      color: #38bdf8;
-    }
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 220px;
-      background: #0f172a;
-      padding: 10px 20px;
+
+    /* Header Style */
+    header {
+      background-color: #1e2a38;
+      color: white;
       display: flex;
       align-items: center;
-      color: white;
-      font-size: 20px;
-      font-weight: 600;
-      z-index: 1;
+      justify-content: space-between;
+      padding: 15px 40px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
     }
-    .main {
-      flex-grow: 1;
-      padding: 40px;
-      margin-left: 220px;
-    }
-    .mining-box {
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    }
-    .mining-coin {
-      font-size: 60px;
-      animation: miningPulse 1s infinite;
-      margin-bottom: 20px;
-    }
-    @keyframes miningPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-    }
-    .tap-button {
-      background: #22c55e;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      font-size: 18px;
+
+    header .logo {
+      font-size: 24px;
       font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 20px;
     }
-    .tap-button:disabled {
-      background: #64748b;
-      cursor: not-allowed;
+
+    header nav {
+      display: flex;
     }
-    .withdraw-button {
-      margin-top: 30px;
-      padding: 12px 24px;
-      background: #3b82f6;
+
+    header nav a {
       color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
+      text-decoration: none;
+      font-size: 16px;
+      margin-left: 20px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      transition: background-color 0.3s;
     }
-    .withdraw-button:disabled {
-      background: #475569;
-      cursor: not-allowed;
+
+    header nav a:hover {
+      background-color: #00d4ff;
     }
-    .pickaxe-shop {
-      margin-top: 40px;
+
+    /* Content Styling */
+    .content {
+      margin-top: 80px; /* To prevent content from hiding behind the header */
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
     }
-    .pickaxe-item {
-      background: #0f172a;
-      margin-bottom: 20px;
-      padding: 15px;
-      border: 1px solid #334155;
-      border-radius: 8px;
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
     }
-    .pickaxe-item button {
-      background: #f59e0b;
-      border: none;
-      padding: 10px 18px;
-      color: #fff;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 10px;
+
+    @media (max-width: 768px) {
+      header {
+        padding: 10px 20px;
+      }
+
+      header .logo {
+        font-size: 20px;
+      }
+
+      header nav a {
+        font-size: 14px;
+        margin-left: 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>📟 MyMiner</h2>
-    <a href="#">Dashboard</a>
-  </div>
-  <div class="main">
-    <div class="mining-box">
-      <div class="mining-coin">⛏️</div>
-      <h2>Total Pendapatan: Rp<span id="balance">0</span></h2>
-      <p>Limit Mining: Rp<span id="limit">2000</span></p>
-      <button class="tap-button" id="mineBtn">TAP UNTUK MENAMBANG</button>
-      <button class="withdraw-button" id="withdrawBtn" disabled>Tarik Uang</button>
+  <!-- Header -->
+  <header>
+    <div class="logo">BigCatMine</div>
+    <nav>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#upgrade">Upgrade Pickaxe</a>
+      <a href="#help">Bantuan</a>
+    </nav>
+  </header>
 
-      <div class="pickaxe-shop">
-        <h3>Upgrade Pickaxe</h3>
-        <div class="pickaxe-item">
-          <strong>🪨 Pickaxe Stone</strong><br>
-          Harga: Rp2.000 - Limit Rp5.000 - Per Tap: Rp2<br>
-          <button onclick="buyPickaxe('stone')">Beli</button>
-        </div>
-        <div class="pickaxe-item">
-          <strong>⛓️ Pickaxe Iron</strong><br>
-          Harga: Rp5.000 - Limit Rp10.000 - Per Tap: Rp5<br>
-          <button onclick="buyPickaxe('iron')">Beli</button>
-        </div>
-        <div class="pickaxe-item">
-          <strong>💎 Pickaxe Diamond</strong><br>
-          Harga: Rp10.000 - Limit Rp20.000 - Per Tap: Rp15<br>
-          <button onclick="buyPickaxe('diamond')">Beli</button>
-        </div>
-        <div class="pickaxe-item">
-          <strong>⚡ Pickaxe God</strong><br>
-          Harga: Rp25.000 - Limit Rp50.000 - Per Tap: Rp50<br>
-          <button onclick="buyPickaxe('god')">Beli</button>
-        </div>
-      </div>
+  <!-- Main Content -->
+  <div class="content">
+    <h1>Selamat Datang di MyGame!</h1>
+    <p>Konten halaman ini bisa disesuaikan lebih lanjut sesuai kebutuhan.</p>
+    <div id="dashboard">
+      <h2>Dashboard</h2>
+      <p>Ini adalah halaman dashboard Anda.</p>
+    </div>
+    <div id="upgrade">
+      <h2>Upgrade Pickaxe</h2>
+      <p>Di sini Anda dapat melakukan upgrade pickaxe untuk meningkatkan kemampuan mining Anda.</p>
+    </div>
+    <div id="help">
+      <h2>Bantuan</h2>
+      <p>Jika Anda membutuhkan bantuan, silakan hubungi kami.</p>
     </div>
   </div>
-
-  <script>
-    let balance = 0;
-    let limit = 2000;
-    let perTap = 1;
-
-    const mineBtn = document.getElementById('mineBtn');
-    const withdrawBtn = document.getElementById('withdrawBtn');
-    const balanceEl = document.getElementById('balance');
-    const limitEl = document.getElementById('limit');
-
-    mineBtn.addEventListener('click', () => {
-      if (balance + perTap <= limit) {
-        balance += perTap;
-        balanceEl.textContent = balance;
-      }
-      if (balance >= 1000) {
-        withdrawBtn.disabled = false;
-      }
-      if (balance >= limit) {
-        mineBtn.disabled = true;
-      }
-    });
-
-    withdrawBtn.addEventListener('click', () => {
-      alert('Silahkan screenshot halaman ini untuk melakukan penarikan.');
-    });
-
-    function buyPickaxe(type) {
-      let price, newLimit, newPerTap;
-      {
-        case 'stone': price = 2000; newLimit = 5000; newPerTap = 2; break;
-        case 'iron': price = 5000; newLimit = 10000; newPerTap = 5; break;
-        case 'diamond': price = 10000; newLimit = 20000; newPerTap = 15; break;
-        case 'god': price = 25000; newLimit = 50000; newPerTap = 50; break;
-      }
-      alert(`Untuk membeli Pickaxe ini, silakan lakukan deposit sebesar Rp${price} melalui QRIS yang tersedia.`);
-      limit = newLimit;
-      perTap = newPerTap;
-      limitEl.textContent = limit;
-      mineBtn.disabled = balance >= limit;
-    }
-  </script>
 </body>
 </html>
