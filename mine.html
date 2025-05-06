@@ -122,7 +122,7 @@
 <body>
   <div class="dashboard">
     <h2>💎 Tambang Uang</h2>
-    <div class="balance">Saldo: Rp <span id="balance">0</span></div>
+    <div class="balance">Saldo: Rp <span id="balance">0/1000</span></div>
 
     <div class="progress-bar">
       <div class="progress-bar-inner" id="progress"></div>
@@ -132,13 +132,13 @@
     <button class="withdraw" id="withdrawBtn" onclick="withdraw()" disabled>💰 Tarik</button>
 
     <p id="message">Klik tombol tambang untuk menghasilkan uang!</p>
-     <p id="message">Capai Rp1000 untuk membuka tombol Tarik</p>
+     <p id="message">Perhatian : Jika terefresh saldo kamu akan ter reset! jangan gunakan auto klik!</p>
   </div>
 
   <script>
     let balance = 0;
-    const balanceTarget = 2000;
-    const withdrawUnlock = 1000;
+    const balanceTarget = 10;
+    const withdrawUnlock = 10;
 
     const balanceDisplay = document.getElementById("balance");
     const progressBar = document.getElementById("progress");
@@ -159,14 +159,14 @@
         }
 
         if (balance >= balanceTarget) {
-          message.textContent = "✅ Limit maksimal Rp2.000 tercapai!\n Untuk menambah limit silahkan Upgrade Pickaxe kamu!";
+          message.textContent = "✅ Limit maksimal Rp1.000 tercapai!\n Untuk menambah limit silahkan Upgrade Pickaxe kamu!";
         }
       }
     }
 
     function withdraw() {
       if (balance >= withdrawUnlock) {
-        alert("Penarikan Rp" + balance + " berhasil!");
+        alert("Penarikan Rp" + balance + " berhasil!\nSilahkan simpan bukti ini untuk mengclaim sebagai uang tunai dimenu penarikan!");
         // reset
         balance = 0;
         balanceDisplay.textContent = balance;
