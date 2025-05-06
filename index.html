@@ -41,13 +41,47 @@
       text-align: center;
     }
 
+    .video-wrapper {
+      position: relative;
+      padding: 12px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #1e2a38, #2a3b4f);
+      box-shadow: 
+        0 0 0 4px rgba(0, 212, 255, 0.2), 
+        0 12px 24px rgba(0, 0, 0, 0.5), 
+        inset 0 0 12px rgba(0, 212, 255, 0.15);
+      margin-bottom: 14px;
+      max-width: 740px;
+      width: 100%;
+    }
+
     #player {
       width: 100%;
-      max-width: 720px;
       height: 405px;
-      border-radius: 16px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .reward-info {
+      font-size: 15px;
+      color: #a3eaff;
+      text-align: center;
+      margin-top: 10px;
+      background: rgba(0, 212, 255, 0.05);
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      backdrop-filter: blur(6px);
+    }
+
+    #rewardTimeInfo {
+      font-size: 14px;
+      color: #ffde59;
+      text-align: center;
+      margin-top: 10px;
+      background: rgba(255, 222, 89, 0.15);
+      padding: 8px 16px;
+      border-radius: 12px;
     }
 
     #watchButton {
@@ -89,9 +123,15 @@
 </head>
 <body>
   <div class="container">
-    <h2>🎬 Tonton Video Selama 1 Menit & Dapatkan Reward!</h2>
+    <h2>🎬 Tonton Video & Dapatkan Reward!</h2>
     <div id="missionCount">Misi tersisa hari ini: 10</div>
-    <div id="player"></div>
+    
+    <div class="video-wrapper">
+      <div id="player"></div>
+    </div>
+    <div class="reward-info">Imbal hasil setelah menonton: Rp10 – Rp50</div>
+    <div id="rewardTimeInfo" class="reward-info" style="display:none;"></div>
+
     <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
   </div>
 
@@ -146,7 +186,7 @@
       if (completed >= dailyLimit) return;
 
       const videoId = getRandomVideoId();
-      countdown = 60;
+      countdown = 180;
       isWatched = false;
       isCounting = false;
       document.getElementById("watchButton").disabled = true;
@@ -188,7 +228,16 @@
       if (!isWatched || completed >= dailyLimit) return;
 
       const reward = Math.floor(Math.random() * (15 - 10 + 1)) + 10;
-      alert(`🎉 Kamu mendapatkan Rp${reward}!\nSilahkan screenshot halaman ini untuk melakukan penarikan!.`);
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeString = `${hours}:${minutes}`;
+
+      alert(`🎉 Kamu mendapatkan Rp${reward}!\nSilahkan screenshot halaman ini untuk melakukan penarikan! <br> Time ${timeString}`);
+
+      const rewardTimeInfo = document.getElementById("rewardTimeInfo");
+      rewardTimeInfo.style.display = "block";
+      rewardTimeInfo.textContent = `🎁 Kamu klaim reward Rp${reward} pada pukul ${timeString}`;
 
       completed++;
       updateMissionCount();
