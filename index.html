@@ -27,18 +27,27 @@
     }
 
     h2 {
-      font-size: 24px;
-      font-weight: 600;
-      color: #00d4ff;
-      margin-bottom: 10px;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00d4ff, #1e90ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 212, 255, 0.3);
+      margin-bottom: 12px;
       text-align: center;
     }
 
     #missionCount {
       font-size: 18px;
-      margin-bottom: 20px;
-      color: #cccccc;
+      font-weight: 500;
+      color: #eeeeee;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      background: rgba(0, 212, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 212, 255, 0.2);
       text-align: center;
+      margin-bottom: 20px;
     }
 
     .video-wrapper {
@@ -46,9 +55,9 @@
       padding: 12px;
       border-radius: 20px;
       background: linear-gradient(145deg, #1e2a38, #2a3b4f);
-      box-shadow: 
-        0 0 0 4px rgba(0, 212, 255, 0.2), 
-        0 12px 24px rgba(0, 0, 0, 0.5), 
+      box-shadow:
+        0 0 0 4px rgba(0, 212, 255, 0.2),
+        0 12px 24px rgba(0, 0, 0, 0.5),
         inset 0 0 12px rgba(0, 212, 255, 0.15);
       margin-bottom: 14px;
       max-width: 740px;
@@ -72,16 +81,6 @@
       border-radius: 12px;
       border: 1px solid rgba(0, 212, 255, 0.2);
       backdrop-filter: blur(6px);
-    }
-
-    #rewardTimeInfo {
-      font-size: 14px;
-      color: #ffde59;
-      text-align: center;
-      margin-top: 10px;
-      background: rgba(255, 222, 89, 0.15);
-      padding: 8px 16px;
-      border-radius: 12px;
     }
 
     #watchButton {
@@ -125,17 +124,15 @@
   <div class="container">
     <h2>🎬 Tonton Video & Dapatkan Reward!</h2>
     <div id="missionCount">Misi tersisa hari ini: 10</div>
-    
+
     <div class="video-wrapper">
       <div id="player"></div>
     </div>
-    <div class="reward-info">🎁 Imbal hasil setelah menonton: Rp10 – Rp50</div>
-    <div id="rewardTimeInfo" class="reward-info" style="display:none;"></div>
+    <div class="reward-info">Imbal hasil setelah menonton: Rp10 – Rp50</div>
 
     <button id="watchButton" onclick="startWatching()">Tonton Sekarang</button>
   </div>
 
-  <!-- YouTube Iframe API -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
     const videoIds = [
@@ -145,7 +142,7 @@
     ];
 
     let player;
-    let countdown = 180;
+    let countdown = 60;
     let timer = null;
     let isWatched = false;
     let isCounting = false;
@@ -186,7 +183,7 @@
       if (completed >= dailyLimit) return;
 
       const videoId = getRandomVideoId();
-      countdown = 180;
+      countdown = 60;
       isWatched = false;
       isCounting = false;
       document.getElementById("watchButton").disabled = true;
@@ -227,17 +224,11 @@
     function claimReward() {
       if (!isWatched || completed >= dailyLimit) return;
 
-      const reward = Math.floor(Math.random() * (15 - 10 + 1)) + 10;
+      const reward = Math.floor(Math.random() * (35 - 10 + 1)) + 10;
       const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const timeString = `${hours}:${minutes}`;
+      const waktu = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-      alert(`🎉 Kamu mendapatkan Rp${reward}!\nSilahkan screenshot halaman ini untuk melakukan penarikan! <br> Time ${timeString}`);
-
-      const rewardTimeInfo = document.getElementById("rewardTimeInfo");
-      rewardTimeInfo.style.display = "block";
-      rewardTimeInfo.textContent = `🎁 Kamu klaim reward Rp${reward} pada pukul ${timeString}`;
+      alert(`🎉 Kamu mendapatkan Rp${reward}!\nWaktu klaim: ${waktu}\n\nSilahkan screenshot halaman ini untuk melakukan penarikan!`);
 
       completed++;
       updateMissionCount();
