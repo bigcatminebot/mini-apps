@@ -142,7 +142,7 @@
     ];
 
     let player;
-    let countdown = 60;
+    let countdown = 180;
     let timer = null;
     let isWatched = false;
     let isCounting = false;
@@ -183,7 +183,7 @@
       if (completed >= dailyLimit) return;
 
       const videoId = getRandomVideoId();
-      countdown = 60;
+      countdown = 180;
       isWatched = false;
       isCounting = false;
       document.getElementById("watchButton").disabled = true;
