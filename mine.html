@@ -179,14 +179,6 @@
   <div class="progress-bar-container">
     <div id="progressBar" class="progress-bar"></div>
   </div>
-    <div id="userDisplay" style="text-align:center; margin-top:20px; font-size:16px; color:#00ffcc;">
-  Username: <span id="usernameDisplay"></span>
-</div>
-</div> <!-- penutup .dashboard -->
-<div id="userDisplay" style="text-align:center; margin-top:20px; font-size:16px; color:#00ffcc;">
-  Username: <span id="usernameDisplay"></span>
-</div>
-
   <div class="saldo">Saldo: <span id="saldo">Rp0/200</span></div>
 </div>
 
@@ -213,17 +205,6 @@
 </div>
 
 <script>
-
-  function displayUsername() {
-  const usernameSpan = document.getElementById("usernameDisplay");
-  if (telegramId && usernameSpan) {
-    usernameSpan.textContent = telegramId;
-  }
-}
-
-// Panggil saat load awal
-displayUsername();
-
 // Atur zona waktu ke WIB
 function getTodayWIB() {
   const now = new Date();
@@ -249,7 +230,7 @@ if (lastVisit !== todayWIB) {
   let telegramId = localStorage.getItem("telegramId") || "";
   const withdrawButton = document.getElementById("withdrawButton");
 
-  document.getElementById("saldo").innerText = `Rp${balance}`;
+  document.getElementById("saldo").innerText = Rp${balance};
   if (telegramId) document.getElementById("overlay").style.display = "none";
   if (balance >= unlockWithdraw) unlockWithdrawButton();
 
@@ -261,7 +242,7 @@ if (lastVisit !== todayWIB) {
     updateProgressBar();
     function updateProgressBar() {
   const percentage = Math.min((balance / maxLimit) * 100, 100);
-  document.getElementById("progressBar").style.width = `${percentage}%`;
+  document.getElementById("progressBar").style.width = ${percentage}%;
 }
 
 // Jalankan saat awal load juga
@@ -278,11 +259,11 @@ updateProgressBar();
     balance += perTap;
     if (balance > maxLimit) balance = maxLimit;
 
-    const message = `+Rp${perTap} berhasil ditambang! (${new Date().toLocaleTimeString()})`;
+    const message = +Rp${perTap} berhasil ditambang! (${new Date().toLocaleTimeString()});
     addLog(message);
     saveLog(message);
 
-    document.getElementById("saldo").innerText = `Rp${balance}`;
+    document.getElementById("saldo").innerText = Rp${balance};
     localStorage.setItem("balance", balance);
 
     if (balance >= unlockWithdraw) {
@@ -305,7 +286,7 @@ updateProgressBar();
   if (withdrawButton.disabled) return; // Jika sudah disabled, hentikan
 
   const waktu = new Date().toLocaleTimeString('id-ID');
-  alert(`🎉 Penarikan berhasil!\n\nUser ID: ${telegramId}\nJumlah: Rp${balance}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin`);
+  alert(🎉 Penarikan berhasil!\n\nUser ID: ${telegramId}\nJumlah: Rp${balance}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin);
 
   withdrawButton.disabled = true;
   withdrawButton.classList.remove("active");
@@ -332,10 +313,6 @@ updateProgressBar();
     if (!input.startsWith("@") || input.length < 3) {
       alert("⚠️ Masukkan Username Telegram yang valid, contoh: @namakamu");
       return;
-      telegramId = input;
-localStorage.setItem("telegramId", telegramId);
-document.getElementById("overlay").style.display = "none";
-displayUsername(); // << TAMBAH INI
     }
 
     telegramId = input;
