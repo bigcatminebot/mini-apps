@@ -205,13 +205,22 @@
 </div>
 
 <script>
-  const today = new Date().toDateString();
-const lastVisit = localStorage.getItem("lastVisit");
+// Atur zona waktu ke WIB
+function getTodayWIB() {
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const wibTime = new Date(utc + (7 * 3600000)); // UTC+7 untuk WIB
+  return wibTime.toDateString(); // Format: "Mon May 06 2025"
+}
 
-if (lastVisit !== today) {
-  localStorage.setItem("lastVisit", today);
+const todayWIB = getTodayWIB();
+const lastVisit = localStorage.getItem("lastVisitWIB");
+
+if (lastVisit !== todayWIB) {
+  localStorage.setItem("lastVisitWIB", todayWIB);
   localStorage.setItem("balance", 0);
   localStorage.removeItem("logList");
+  alert("🎉 Limit harian anda telah direset! Silahkan mulai menambang.");
 }
   
   let balance = parseInt(localStorage.getItem("balance")) || 0;
