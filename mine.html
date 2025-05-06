@@ -125,16 +125,14 @@
   <div class="sidebar">
     <h2>📟 MyMiner</h2>
     <a href="#">Dashboard</a>
-    <a href="#">Penarikan</a>
-    <a href="#">Beli Pickaxe</a>
-    <a href="#">Logout</a>
   </div>
   <div class="main">
     <div class="mining-box">
       <div class="mining-coin">⛏️</div>
       <h2>Total Pendapatan: Rp<span id="balance">0</span></h2>
       <p>Limit Mining: Rp<span id="limit">2000</span></p>
-      <button class="tap-button" id="mineBtn">TAP UNTUK MENAMBANG</button>
+      <button class="tap-button" id="mineBtn">TAP UNTUK MENAMBANG</button><br>
+    </br>
       <button class="withdraw-button" id="withdrawBtn" disabled>Tarik Uang</button>
 
       <div class="pickaxe-shop">
@@ -187,12 +185,12 @@
     });
 
     withdrawBtn.addEventListener('click', () => {
-      alert('Silahkan isi form penarikan.');
+      alert('Silahkan screenshot halaman ini untuk melakukan penarikan.');
     });
 
     function buyPickaxe(type) {
       let price, newLimit, newPerTap;
-      switch(type) {
+      {
         case 'stone': price = 2000; newLimit = 5000; newPerTap = 2; break;
         case 'iron': price = 5000; newLimit = 10000; newPerTap = 5; break;
         case 'diamond': price = 10000; newLimit = 20000; newPerTap = 15; break;
