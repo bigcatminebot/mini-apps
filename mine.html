@@ -1,182 +1,131 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Mining</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Tambang</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f4f4f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      flex-direction: column;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background-color: #f0f0f0;
     }
 
     .dashboard {
-      text-align: center;
-      background-color: #fff;
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      width: 300px;
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     h2 {
       margin-bottom: 20px;
-      font-size: 24px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    .mining-info {
-      margin-bottom: 20px;
-      font-size: 18px;
-      color: #333;
-    }
-
-    .mining-btn {
-      background-color: #00d4ff;
-      color: white;
-      font-size: 20px;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .mining-btn:hover {
-      background-color: #0094dd;
-      transform: translateY(-2px);
-    }
-
-    .mining-btn:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-      box-shadow: none;
     }
 
     .progress-bar {
-      width: 100%;
-      background-color: #eee;
-      border-radius: 10px;
-      margin-bottom: 20px;
       height: 20px;
+      width: 100%;
+      background: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
     }
 
-    .progress-bar div {
+    .progress-bar-inner {
       height: 100%;
-      background-color: #00d4ff;
-      border-radius: 10px;
+      width: 0%;
+      background-color: #00aaff;
       transition: width 0.3s ease;
     }
 
-    .withdraw-btn {
-      background-color: #28a745;
-      color: white;
-      padding: 12px 25px;
-      font-size: 18px;
+    button {
+      padding: 15px 30px;
+      font-size: 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      margin: 10px;
     }
 
-    .withdraw-btn:disabled {
-      background-color: #ccc;
+    .mine {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .withdraw {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .withdraw:disabled {
+      background-color: #aaa;
       cursor: not-allowed;
     }
 
-    .info-text {
-      margin-top: 20px;
-      font-size: 16px;
+    #message {
+      margin-top: 15px;
       color: #555;
     }
   </style>
 </head>
 <body>
-
   <div class="dashboard">
-    <h2>💎 Dashboard - Mining</h2>
-    
-    <div class="mining-info">
-      <p>Total Saldo: Rp <span id="totalBalance">0</span></p>
-      <p>Target: Rp2,000</p>
-    </div>
+    <h2>💎 Tambang Uang</h2>
+    <p>Saldo: Rp <span id="balance">0</span></p>
 
     <div class="progress-bar">
-      <div id="progressBar" style="width: 0;"></div>
+      <div class="progress-bar-inner" id="progress"></div>
     </div>
 
-    <button class="mining-btn" id="mineButton" onclick="mine()">💎 Tambang</button>
+    <button class="mine" onclick="mine()">⛏️ Tambang</button>
+    <button class="withdraw" id="withdrawBtn" onclick="withdraw()" disabled>💰 Tarik</button>
 
-    <button class="withdraw-btn" id="withdrawButton" disabled onclick="withdraw()">💰 Penarikan</button>
-
-    <div class="info-text">
-      <p id="message">Selamat menambang! Klik tombol untuk menambah saldo.</p>
-    </div>
+    <p id="message">Klik tombol tambang untuk menghasilkan uang!</p>
   </div>
 
   <script>
     let balance = 0;
-    const targetLimit = 2000; // Limit until withdraw button is unlocked
-    const withdrawLimit = 1000; // Amount needed to unlock withdraw
-    const balanceElement = document.getElementById("totalBalance");
-    const progressBar = document.getElementById("progressBar");
-    const mineButton = document.getElementById("mineButton");
-    const withdrawButton = document.getElementById("withdrawButton");
-    const messageElement = document.getElementById("message");
+    const balanceTarget = 2000;
+    const withdrawUnlock = 1000;
 
-    // Mining function: Every click increases balance by Rp1
+    const balanceDisplay = document.getElementById("balance");
+    const progressBar = document.getElementById("progress");
+    const withdrawBtn = document.getElementById("withdrawBtn");
+    const message = document.getElementById("message");
+
     function mine() {
-      if (balance < targetLimit) {
-        balance += 1; // Increase balance by Rp1
-        balanceElement.textContent = balance;
+      if (balance < balanceTarget) {
+        balance += 1;
+        balanceDisplay.textContent = balance;
 
-        // Update progress bar
-        const progressPercentage = (balance / targetLimit) * 100;
-        progressBar.style.width = progressPercentage + "%";
+        let percentage = (balance / balanceTarget) * 100;
+        progressBar.style.width = percentage + "%";
 
-        // Check if withdraw button can be unlocked
-        if (balance >= withdrawLimit) {
-          withdrawButton.disabled = false;
-          messageElement.textContent = "🎉 Penarikan dibuka! Kamu sudah mencapai Rp1,000.";
+        if (balance >= withdrawUnlock) {
+          withdrawBtn.disabled = false;
+          message.textContent = "🎉 Kamu bisa menarik uang sekarang!";
         }
 
-        // Check if the mining target is reached
-        if (balance >= targetLimit) {
-          mineButton.disabled = true;
-          messageElement.textContent = "🎯 Target Rp2,000 tercapai! Mining selesai.";
+        if (balance >= balanceTarget) {
+          message.textContent = "✅ Target maksimal Rp2.000 tercapai!";
         }
       }
     }
 
-    // Withdraw function
     function withdraw() {
-      if (balance >= withdrawLimit) {
-        const time = new Date().toLocaleTimeString();
-        alert(`🎉 Penarikan berhasil! Kamu menarik Rp${withdrawLimit} pada ${time}`);
-        // Reset everything after withdrawal
+      if (balance >= withdrawUnlock) {
+        alert("Penarikan Rp" + balance + " berhasil!");
+        // reset
         balance = 0;
-        balanceElement.textContent = balance;
+        balanceDisplay.textContent = balance;
         progressBar.style.width = "0%";
-        withdrawButton.disabled = true;
-        mineButton.disabled = false;
-        messageElement.textContent = "Selamat menambang! Klik tombol untuk menambah saldo.";
+        withdrawBtn.disabled = true;
+        message.textContent = "Klik tombol tambang untuk menghasilkan uang!";
       }
     }
   </script>
-
 </body>
 </html>
