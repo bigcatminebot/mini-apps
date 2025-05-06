@@ -265,12 +265,6 @@ function mine() {
 
   if (balance >= unlockWithdraw) {
     unlockWithdrawButton();
-  }
-
-  if (balance >= maxLimit) {
-    alert("⚠️ Kamu sudah mencapai limit harian.");
-    window.location.href = "upgrade-pickaxe.html";
-  }
 }
 
 function unlockWithdrawButton() {
