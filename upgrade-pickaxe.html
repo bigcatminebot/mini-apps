@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upgrade Pickaxe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #0f2027;
+      color: #fff;
+    }
+
+    header {
+      background-color: #1c1f26;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #333;
+    }
+
+    header .logo {
+      font-size: 22px;
+      font-weight: 600;
+      color: #00d4ff;
+    }
+
+    nav a {
+      color: #eee;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: #00d4ff;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 32px;
+      color: #00d4ff;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: linear-gradient(145deg, #1c1f26, #2a2d36);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      border: 1px solid #333;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: #00c3ff;
+    }
+
+    .card p {
+      margin: 6px 0;
+      font-size: 15px;
+    }
+
+    .price {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 8px;
+      color: #ffd700;
+    }
+
+    .btn-beli {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background: #00d4ff;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-beli:hover {
+      background: #00b2d6;
+    }
+
+    @media (max-width: 600px) {
+      nav a {
+        margin-left: 12px;
+        font-size: 14px;
+      }
+
+      .btn-beli {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">⛏️ Mining App</div>
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="upgrade-pickaxe.html">Upgrade Pickaxe</a>
+      <a href="#">Bantuan</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>💎 Pilih Pickaxe untuk Upgrade</h2>
+    <div class="cards">
+
+      <div class="card">
+        <h3>Pickaxe Stone</h3>
+        <p>Limit: Rp20.000</p>
+        <p>Per Tap: Rp3</p>
+        <div class="price">Rp10.000</div>
+        <button class="btn-beli" onclick="beliPickaxe('stone')">Beli</button>
+      </div>
+
+      <div class="card">
+        <h3>Pickaxe Iron</h3>
+        <p>Limit: Rp50.000</p>
+        <p>Per Tap: Rp8</p>
+        <div class="price">Rp25.000</div>
+        <button class="btn-beli" onclick="beliPickaxe('iron')">Beli</button>
+      </div>
+
+      <div class="card">
+        <h3>Pickaxe Gold</h3>
+        <p>Limit: Rp100.000</p>
+        <p>Per Tap: Rp15</p>
+        <div class="price">Rp50.000</div>
+        <button class="btn-beli" onclick="beliPickaxe('gold')">Beli</button>
+      </div>
+
+      <div class="card">
+        <h3>Pickaxe Diamond</h3>
+        <p>Limit: Rp200.000</p>
+        <p>Per Tap: Rp25</p>
+        <div class="price">Rp100.000</div>
+        <button class="btn-beli" onclick="beliPickaxe('diamond')">Beli</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function beliPickaxe(tipe) {
+      // Redirect to QRIS payment gateway — Replace this with your real QRIS link logic
+      const links = {
+        stone: "https://saweria.co/yourqrislink/10000",
+        iron: "https://saweria.co/yourqrislink/25000",
+        gold: "https://saweria.co/yourqrislink/50000",
+        diamond: "https://saweria.co/yourqrislink/100000"
+      };
+      window.location.href = links[tipe];
+    }
+  </script>
+
+</body>
+</html>
