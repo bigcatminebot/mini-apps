@@ -1,175 +1,198 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard Mining</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Tambang</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #1f4037, #99f2c8);
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
     }
 
-    header {
-      background-color: #0f2027;
-      padding: 15px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    header h1 {
-      font-size: 20px;
-      color: #00ffe0;
-    }
-
-    nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #ffffffcc;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-
-    nav a:hover {
-      color: #00ffe0;
-    }
-
     .dashboard {
-      margin-top: 30px;
       text-align: center;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      padding: 40px 20px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
     }
 
-    .pickaxe-anim {
-      width: 120px;
-      height: 120px;
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .saldo {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 20px 0;
+      color: #00eaff;
+    }
+
+    .btn-tambang {
+      background: linear-gradient(45deg, #00eaff, #0066ff);
+      border: none;
+      padding: 15px 30px;
+      font-size: 18px;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn-tambang:active {
+      transform: scale(0.95);
+    }
+
+    .animasi-tambang {
+      width: 100px;
+      height: 100px;
       margin: 20px auto;
-      background: url('https://cdn-icons-png.flaticon.com/512/2234/2234376.png') no-repeat center center/contain;
-      animation: shake 0.3s ease infinite;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/122/122785.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      animation: shake 0.3s infinite;
     }
 
     @keyframes shake {
       0% { transform: rotate(0deg); }
-      25% { transform: rotate(5deg); }
-      50% { transform: rotate(-5deg); }
-      75% { transform: rotate(5deg); }
+      25% { transform: rotate(3deg); }
+      50% { transform: rotate(0deg); }
+      75% { transform: rotate(-3deg); }
       100% { transform: rotate(0deg); }
     }
 
-    #mineBtn {
-      padding: 14px 32px;
-      font-size: 18px;
-      background: #00c6ff;
-      background: linear-gradient(to right, #0072ff, #00c6ff);
-      border: none;
-      border-radius: 10px;
-      color: white;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 198, 255, 0.3);
-      transition: 0.2s ease;
-    }
-
-    #mineBtn:active {
-      transform: scale(0.95);
-    }
-
-    .balance {
-      font-size: 22px;
-      margin-top: 15px;
-    }
-
-    .withdraw-btn {
+    .btn-penarikan {
       margin-top: 20px;
-      padding: 12px 26px;
-      font-size: 16px;
-      background-color: #555;
+      background-color: #444;
       border: none;
-      color: white;
-      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 10px;
+      color: #ccc;
       cursor: not-allowed;
-      opacity: 0.6;
     }
 
-    .withdraw-btn.active {
-      background-color: #28a745;
+    .btn-penarikan.active {
+      background: linear-gradient(45deg, #00ff99, #00cc66);
+      color: #fff;
       cursor: pointer;
-      opacity: 1;
     }
 
-    @media (max-width: 768px) {
-      nav a {
-        margin-left: 10px;
-        font-size: 14px;
-      }
+    /* Popup */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
 
-      .pickaxe-anim {
-        width: 100px;
-        height: 100px;
-      }
+    .popup-content {
+      background: #222;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 400px;
+      text-align: center;
+    }
 
-      #mineBtn {
-        font-size: 16px;
-        width: 80%;
-      }
+    .popup-content input {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .popup-content button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #00eaff;
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <div class="pickaxe-anim"></div>
-    <button id="mineBtn" onclick="handleMining()">🪓 Tambang</button>
-    <div class="balance">Saldo: Rp<span id="balance">0</span></div>
-    <button id="withdrawBtn" class="withdraw-btn" disabled>🔒 Tarik Dana</button>
+
+<div class="popup-overlay" id="popup">
+  <div class="popup-content">
+    <h2>Masukkan User ID Telegram</h2>
+    <p>Wajib untuk penarikan dana!</p>
+    <input type="text" id="telegramId" placeholder="Contoh: 123456789">
+    <button onclick="saveUserId()">Lanjutkan</button>
   </div>
+</div>
 
-  <script>
-    let currentBalance = 0;
-    let currentLimit = 1000;
-    let currentPerTap = 1;
+<div class="dashboard">
+  <h1>🛠️ Dashboard Tambang</h1>
+  <div class="saldo" id="saldo">Rp0</div>
+  <div class="animasi-tambang"></div>
+  <button class="btn-tambang" onclick="tambang()">⛏️ Tambang Sekarang</button>
+  <button class="btn-penarikan" id="penarikanBtn" onclick="tarikSaldo()" disabled>💰 Tarik Saldo</button>
+</div>
 
-    const balanceEl = document.getElementById("balance");
-    const withdrawBtn = document.getElementById("withdrawBtn");
+<script>
+  let saldo = 0;
+  const limit = 200;
+  const minPenarikan = 200;
+  let telegramUserId = '';
 
-    function updateBalanceDisplay() {
-      balanceEl.textContent = currentBalance.toLocaleString();
-      if (currentBalance >= 1000) {
-        withdrawBtn.classList.add("active");
-        withdrawBtn.disabled = false;
-        withdrawBtn.innerText = "💸 Tarik Dana";
-        withdrawBtn.onclick = () => {
-          alert("Silakan Screenshot halaman ini & tarik dana melalui admin.");
-        };
-      }
+  function saveUserId() {
+    const input = document.getElementById('telegramId').value.trim();
+    if (!input || isNaN(input)) {
+      alert("User ID Telegram tidak valid!");
+      return;
     }
+    telegramUserId = input;
+    document.getElementById('popup').style.display = 'none';
+  }
 
-    function checkUpgradeNeeded() {
-      if (currentBalance >= currentLimit) {
-        setTimeout(() => {
-          if (confirm("⚠️ Kamu telah mencapai limit saldo.\nSilahkan upgrade Pickaxe untuk melanjutkan?")) {
-            window.location.href = "upgrade-pickaxe.html";
-          }
-        }, 400);
-      }
-    }
-
-    function handleMining() {
-      if (currentBalance < currentLimit) {
-        currentBalance += currentPerTap;
-        updateBalanceDisplay();
-        checkUpgradeNeeded();
+  function tambang() {
+    if (saldo >= limit) {
+      if (confirm("Limit harian tercapai! Upgrade pickaxe untuk menambah limit?")) {
+        window.location.href = 'upgrade.html';
       } else {
-        checkUpgradeNeeded();
+        alert("Silakan kembali besok untuk menambang lagi.");
       }
+      return;
     }
-  </script>
+    saldo += 1;
+    document.getElementById('saldo').textContent = `Rp${saldo}`;
+
+    if (saldo >= minPenarikan) {
+      const btn = document.getElementById('penarikanBtn');
+      btn.classList.add('active');
+      btn.disabled = false;
+    }
+  }
+
+  function tarikSaldo() {
+    const waktu = new Date().toLocaleTimeString('id-ID');
+    alert(`📤 Permintaan Penarikan\nUser ID Telegram: ${telegramUserId}\nJumlah: Rp${saldo}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin untuk memproses penarikan.`);
+  }
+</script>
+
 </body>
 </html>
