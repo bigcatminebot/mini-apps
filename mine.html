@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Sidebar</title>
+  <title>Dashboard - Mining</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -15,109 +15,168 @@
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
     }
 
-    /* Sidebar */
-    #sidebar {
-      height: 100%;
-      width: 250px;
-      background-color: #1e2a38;
-      color: white;
-      position: fixed;
-      top: 0;
-      left: -250px; /* Initially hidden */
-      transition: 0.3s;
-      padding-top: 60px;
-      z-index: 1000;
-    }
-
-    #sidebar a {
-      padding: 16px;
-      text-decoration: none;
-      font-size: 18px;
-      color: white;
-      display: block;
-      transition: background-color 0.3s;
-    }
-
-    #sidebar a:hover {
-      background-color: #00d4ff;
-    }
-
-    #menuToggle {
-      font-size: 30px;
-      color: #1e2a38;
-      background-color: #fff;
-      border: none;
-      padding: 15px;
-      cursor: pointer;
-      display: none;
-    }
-
-    #sidebar a.active {
-      background-color: #00d4ff;
-    }
-
-    /* Content */
-    .content {
-      margin-left: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      margin-bottom: 20px;
+    .dashboard {
       text-align: center;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      width: 300px;
     }
 
-    /* Media Queries - Mobile */
-    @media screen and (max-width: 768px) {
-      #sidebar {
-        left: -250px;
-        width: 100%;
-        height: 100%;
-        padding-top: 70px;
-        transition: 0.3s;
-      }
-
-      #sidebar.open {
-        left: 0;
-      }
-
-      #menuToggle {
-        display: block;
-      }
-
-      .content {
-        margin-left: 0;
-        padding: 15px;
-      }
+    h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
     }
 
+    .mining-info {
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .mining-btn {
+      background-color: #00d4ff;
+      color: white;
+      font-size: 20px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .mining-btn:hover {
+      background-color: #0094dd;
+      transform: translateY(-2px);
+    }
+
+    .mining-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #eee;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      height: 20px;
+    }
+
+    .progress-bar div {
+      height: 100%;
+      background-color: #00d4ff;
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+
+    .withdraw-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .withdraw-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .info-text {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <div id="sidebar">
-    <a href="#">Dashboard</a>
-    <a href="/upgrade.html">Upgrade Pickaxe</a>
-    <a href="/help.html">Bantuan</a>
-  </div>
 
-  <!-- Menu Toggle Button for Mobile -->
-  <button id="menuToggle" onclick="toggleSidebar()">☰</button>
+  <div class="dashboard">
+    <h2>💎 Dashboard - Mining</h2>
+    
+    <div class="mining-info">
+      <p>Total Saldo: Rp <span id="totalBalance">0</span></p>
+      <p>Target: Rp2,000</p>
+    </div>
 
-  <!-- Content -->
-  <div class="content">
-    <h1>Responsive Sidebar</h1>
-    <p>Isi halaman dapat ditempatkan di sini.</p>
+    <div class="progress-bar">
+      <div id="progressBar" style="width: 0;"></div>
+    </div>
+
+    <button class="mining-btn" id="mineButton" onclick="mine()">💎 Tambang</button>
+
+    <button class="withdraw-btn" id="withdrawButton" disabled onclick="withdraw()">💰 Penarikan</button>
+
+    <div class="info-text">
+      <p id="message">Selamat menambang! Klik tombol untuk menambah saldo.</p>
+    </div>
   </div>
 
   <script>
-    // Toggle Sidebar
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('open');
+    let balance = 0;
+    const targetLimit = 2000; // Limit until withdraw button is unlocked
+    const withdrawLimit = 1000; // Amount needed to unlock withdraw
+    const balanceElement = document.getElementById("totalBalance");
+    const progressBar = document.getElementById("progressBar");
+    const mineButton = document.getElementById("mineButton");
+    const withdrawButton = document.getElementById("withdrawButton");
+    const messageElement = document.getElementById("message");
+
+    // Mining function: Every click increases balance by Rp1
+    function mine() {
+      if (balance < targetLimit) {
+        balance += 1;
+        balanceElement.textContent = balance;
+        
+        // Update progress bar
+        const progressPercentage = (balance / targetLimit) * 100;
+        progressBar.style.width = progressPercentage + "%";
+
+        // Check if withdraw button can be unlocked
+        if (balance >= withdrawLimit) {
+          withdrawButton.disabled = false;
+          messageElement.textContent = "🎉 Penarikan dibuka! Kamu sudah mencapai Rp1,000.";
+        }
+
+        // Check if the mining target is reached
+        if (balance >= targetLimit) {
+          mineButton.disabled = true;
+          messageElement.textContent = "🎯 Target Rp2,000 tercapai! Untuk melanjutkan menambang silahkan Upgrade Pickaxe kamu!";
+        }
+      }
+    }
+
+    // Withdraw function
+    function withdraw() {
+      if (balance >= withdrawLimit) {
+        const time = new Date().toLocaleTimeString();
+        alert(`🎉 Penarikan berhasil! Kamu menarik Rp${withdrawLimit} pada ${time}`\n Silahkan screenshot halaman ini dan hubungi admin untuk melakukan penarikan uang Tunai!);
+        // Reset everything after withdrawal
+        balance = 0;
+        balanceElement.textContent = balance;
+        progressBar.style.width = "0%";
+        withdrawButton.disabled = true;
+        mineButton.disabled = false;
+        messageElement.textContent = "Selamat menambang! Klik tombol untuk menambah saldo.";
+      }
     }
   </script>
+
 </body>
 </html>
