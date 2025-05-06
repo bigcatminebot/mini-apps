@@ -170,7 +170,7 @@
 </head>
 <body>
 
-<header>💎BigCatMine - Dashboard (${pickaxeName})</header>
+<header>💎BigCatMine - Dashboard </header>
 
 <div class="dashboard">
   <div class="saldo-container">
@@ -202,23 +202,6 @@
 </div>
 
 <script>
-// Konfigurasi pickaxe berdasarkan pilihan user
-const pickaxeConfig = {
-  stone:  { limit: 3000, perTap: 3, name: "Pickaxe Stone" },
-  iron:   { limit: 5000, perTap: 8, name: "Pickaxe Iron" },
-  gold:   { limit: 10000, perTap: 15, name: "Pickaxe Gold" },
-  diamond:{ limit: 20000, perTap: 25, name: "Pickaxe Diamond" }
-};
-
-const selectedPickaxe = localStorage.getItem("pickaxeType");
-
-if (!selectedPickaxe || !pickaxeConfig[selectedPickaxe]) {
-  alert("Silakan pilih Pickaxe terlebih dahulu.");
-  window.location.href = "pilih-pickaxe.html";
-}
-
-const { limit: maxLimit, perTap, name: pickaxeName } = pickaxeConfig[selectedPickaxe];
-
 // Atur zona waktu ke WIB
 function getTodayWIB() {
   const now = new Date();
