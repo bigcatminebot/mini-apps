@@ -170,14 +170,14 @@
 </head>
 <body>
 
-<header>💎GOLD PICKAXE - Dashboard</header>
+<header>💎gold pickaxe - Dashboard</header>
 
 <div class="dashboard">
   <div class="saldo-container">
     <div class="progress-bar-container">
       <div id="progressBar" class="progress-bar"></div>
     </div>
-    <div class="saldo">Saldo: <span id="saldo">Rp0</span></div>
+    <div class="saldo">Saldo: <span id="saldo">Rp0/200</span></div>
   </div>
 
   <div class="button-group">
@@ -244,7 +244,12 @@ function mine() {
 
   // Jalankan saat awal load juga
   updateProgressBar();
-
+  if (balance >= maxLimit) {
+    if (confirm("Kamu sudah mencapai limit hari ini!")) {
+      window.location.href = '#';
+    } else {
+      alert("Silakan kembali besok untuk menambang lagi.");
+    }
     return;
   }
 
@@ -262,10 +267,10 @@ function mine() {
     unlockWithdrawButton();
   }
 
-   if (balance >= maxLimit) {
-      alert("Silakan kembali besok untuk menambang lagi.");
-    }
-
+  if (balance >= maxLimit) {
+    alert("⚠️ Kamu sudah mencapai limit harian.");
+    window.location.href = "#";
+  }
 }
 
 function unlockWithdrawButton() {
