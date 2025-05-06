@@ -170,7 +170,7 @@
 </head>
 <body>
 
-<header>💎STONE PICKAXE - Dashboard</header>
+<header>💎BigCatMine - Dashboard Iron Pickaxe</header>
 
 <div class="dashboard">
   <div class="saldo-container">
@@ -221,8 +221,8 @@ if (lastVisit !== todayWIB) {
 }
 
 let balance = parseInt(localStorage.getItem("balance")) || 0;
-const maxLimit = 3000;
-const perTap = 3;
+const maxLimit = 5000;
+const perTap = 8;
 const unlockWithdraw = 1;
 let telegramId = localStorage.getItem("telegramId") || "";
 const withdrawButton = document.getElementById("withdrawButton");
@@ -242,12 +242,6 @@ function mine() {
     document.getElementById("progressBar").style.width = `${percentage}%`;
   }
 
-  // Jalankan saat awal load juga
-  updateProgressBar();
-
-    return;
-  }
-
   balance += perTap;
   if (balance > maxLimit) balance = maxLimit;
 
@@ -262,10 +256,10 @@ function mine() {
     unlockWithdrawButton();
   }
 
-   if (balance >= maxLimit) {
-      alert("Silakan kembali besok untuk menambang lagi.");
-    }
-
+  if (balance >= maxLimit) {
+    alert("⚠️ Kamu sudah mencapai limit harian.");
+    window.location.href = "#";
+  }
 }
 
 function unlockWithdrawButton() {
