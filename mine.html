@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Halaman dengan Header Fixed</title>
+  <title>Dashboard - Menambang</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -18,7 +18,7 @@
       color: #333;
     }
 
-    /* Header Style */
+    /* Header */
     header {
       background-color: #1e2a38;
       color: white;
@@ -55,39 +55,102 @@
       background-color: #00d4ff;
     }
 
-    /* Content Styling */
+    /* Content */
     .content {
-      margin-top: 80px; /* To prevent content from hiding behind the header */
+      margin-top: 80px;
       padding: 40px;
       max-width: 1200px;
       margin: auto;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
-    @media (max-width: 768px) {
-      header {
-        padding: 10px 20px;
-      }
+    .mining-container {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #1e2a38;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-      header .logo {
-        font-size: 20px;
-      }
+    .mining-status {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #00d4ff;
+    }
 
-      header nav a {
-        font-size: 14px;
-        margin-left: 15px;
+    .tap-button {
+      padding: 20px 40px;
+      font-size: 18px;
+      background-color: #00d4ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 170, 255, 0.3);
+    }
+
+    .tap-button:hover {
+      background-color: #1e90ff;
+    }
+
+    .tap-button:disabled {
+      background-color: #444;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .withdraw-button {
+      margin-top: 20px;
+      padding: 12px 28px;
+      font-size: 16px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: not-allowed;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .withdraw-button.open {
+      background-color: #00d4ff;
+      cursor: pointer;
+    }
+
+    .withdraw-button.open:hover {
+      background-color: #1e90ff;
+    }
+
+    /* Animasi */
+    .mining-animation {
+      animation: mining 2s infinite;
+    }
+
+    @keyframes mining {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
       }
     }
+
   </style>
 </head>
 <body>
   <!-- Header -->
   <header>
-    <div class="logo">BigCatMine</div>
+    <div class="logo">MyGame</div>
     <nav>
       <a href="#dashboard">Dashboard</a>
       <a href="#upgrade">Upgrade Pickaxe</a>
@@ -95,22 +158,63 @@
     </nav>
   </header>
 
-  <!-- Main Content -->
+  <!-- Dashboard Content -->
   <div class="content">
-    <h1>Selamat Datang di MyGame!</h1>
-    <p>Konten halaman ini bisa disesuaikan lebih lanjut sesuai kebutuhan.</p>
-    <div id="dashboard">
-      <h2>Dashboard</h2>
-      <p>Ini adalah halaman dashboard Anda.</p>
-    </div>
-    <div id="upgrade">
-      <h2>Upgrade Pickaxe</h2>
-      <p>Di sini Anda dapat melakukan upgrade pickaxe untuk meningkatkan kemampuan mining Anda.</p>
-    </div>
-    <div id="help">
-      <h2>Bantuan</h2>
-      <p>Jika Anda membutuhkan bantuan, silakan hubungi kami.</p>
+    <h1>Dashboard - Menambang</h1>
+
+    <div class="mining-container">
+      <div class="mining-status">
+        <p>Saldo: <span id="balance">Rp0</span></p>
+        <p>Limit: <span id="limit">Rp2,000</span></p>
+        <p id="miningText">Mulai menambang untuk mendapatkan uang!</p>
+      </div>
+
+      <!-- Tombol Menambang -->
+      <button id="tapButton" class="tap-button" onclick="tapMining()">Menambang</button>
+
+      <!-- Tombol Penarikan -->
+      <button id="withdrawButton" class="withdraw-button" disabled>Penarikan (Terkunci)</button>
     </div>
   </div>
+
+  <script>
+    let balance = 0;
+    let limit = 2000;
+    let tapValue = 1; // per tap Rp1
+    let target = 1000;
+    let isWithdrawable = false;
+
+    function tapMining() {
+      if (balance < limit) {
+        balance += tapValue;
+        document.getElementById('balance').textContent = `Rp${balance}`;
+        
+        // Update mining text
+        document.getElementById('miningText').textContent = `Menambang... Rp${balance}`;
+        
+        // Check if the withdraw button can be unlocked
+        if (balance >= target) {
+          unlockWithdrawButton();
+        }
+      }
+    }
+
+    function unlockWithdrawButton() {
+      const withdrawButton = document.getElementById('withdrawButton');
+      withdrawButton.disabled = false;
+      withdrawButton.classList.add('open');
+      withdrawButton.textContent = "Penarikan (Buka)";
+      
+      withdrawButton.onclick = () => {
+        alert(`🎉 Kamu berhasil menarik Rp${balance}!`);
+        // Reset balance after withdrawal
+        balance = 0;
+        document.getElementById('balance').textContent = `Rp${balance}`;
+        withdrawButton.disabled = true;
+        withdrawButton.classList.remove('open');
+        withdrawButton.textContent = "Penarikan (Terkunci)";
+      };
+    }
+  </script>
 </body>
 </html>
