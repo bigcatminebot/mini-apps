@@ -141,9 +141,9 @@
     // Mining function: Every click increases balance by Rp1
     function mine() {
       if (balance < targetLimit) {
-        balance += 1;
+        balance += 1; // Increase balance by Rp1
         balanceElement.textContent = balance;
-        
+
         // Update progress bar
         const progressPercentage = (balance / targetLimit) * 100;
         progressBar.style.width = progressPercentage + "%";
@@ -157,7 +157,7 @@
         // Check if the mining target is reached
         if (balance >= targetLimit) {
           mineButton.disabled = true;
-          messageElement.textContent = "🎯 Target Rp2,000 tercapai! Untuk melanjutkan menambang silahkan Upgrade Pickaxe kamu!";
+          messageElement.textContent = "🎯 Target Rp2,000 tercapai! Mining selesai.";
         }
       }
     }
@@ -166,7 +166,7 @@
     function withdraw() {
       if (balance >= withdrawLimit) {
         const time = new Date().toLocaleTimeString();
-        alert(`🎉 Penarikan berhasil! Kamu menarik Rp${withdrawLimit} pada ${time}`\n Silahkan screenshot halaman ini dan hubungi admin untuk melakukan penarikan uang Tunai!);
+        alert(`🎉 Penarikan berhasil! Kamu menarik Rp${withdrawLimit} pada ${time}`);
         // Reset everything after withdrawal
         balance = 0;
         balanceElement.textContent = balance;
