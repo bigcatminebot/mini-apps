@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Dashboard Tambang</title>
   <style>
+
+    
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
@@ -13,12 +15,40 @@
     }
 
     header {
-      padding: 20px 0;
-      text-align: center;
-      color: #00d4ff;
-      font-size: 24px;
-      font-weight: bold;
-    }
+  padding: 20px 0;
+  text-align: center;
+  color: #00d4ff;
+  font-size: 28px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #00d4ff;
+}
+
+.saldo-container {
+  margin-top: 20px;
+  background: #0c1a2b;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: inset 0 0 10px #003e63;
+}
+
+.progress-bar-container {
+  background-color: #2a3d55;
+  border-radius: 10px;
+  height: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #00c3ff;
+  width: 0%;
+  transition: width 0.4s ease;
+  border-radius: 10px;
+}
+
 
     .dashboard {
       max-width: 600px;
@@ -145,7 +175,13 @@
 <header>💎 Dashboard Tambang</header>
 
 <div class="dashboard">
-  <div class="saldo">Saldo: <span id="saldo">Rp0</span></div>
+  <div class="saldo-container">
+  <div class="progress-bar-container">
+    <div id="progressBar" class="progress-bar"></div>
+  </div>
+  <div class="saldo">Saldo: <span id="saldo">Rp0/200</span></div>
+</div>
+
 
   <div class="button-group">
     <button id="mineButton" onclick="mine()">🔨 Tambang</button>
@@ -185,9 +221,20 @@
   savedLog.forEach(text => addLog(text));
 
   function mine() {
+    updateProgressBar();
+    function updateProgressBar() {
+  const percentage = Math.min((balance / maxLimit) * 100, 100);
+  document.getElementById("progressBar").style.width = `${percentage}%`;
+}
+
+// Jalankan saat awal load juga
+updateProgressBar();
     if (balance >= maxLimit) {
-      alert("⛏️ Limit harian tercapai!\nSilakan upgrade Pickaxe untuk lanjut.");
-      window.location.href = "upgrade.html";
+      if (confirm("Limit harian tercapai! Upgrade pickaxe untuk menambah limit?")) {
+        window.location.href = 'upgrade-pickaxe.html';
+      } else {
+        alert("Silakan kembali besok untuk menambang lagi.");
+      }
       return;
     }
 
@@ -219,7 +266,7 @@
 
   function withdraw() {
     const waktu = new Date().toLocaleTimeString('id-ID');
-    alert(`🎉 Penarikan berhasil!\n\nUser ID: ${telegramId}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin`);
+    alert(`🎉 Penarikan berhasil!\n\nUser ID: ${telegramId}\nJumlah: Rp${balance}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin`);
   }
 
   function addLog(message) {
