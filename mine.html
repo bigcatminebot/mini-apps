@@ -205,6 +205,15 @@
 </div>
 
 <script>
+  const today = new Date().toDateString();
+const lastVisit = localStorage.getItem("lastVisit");
+
+if (lastVisit !== today) {
+  localStorage.setItem("lastVisit", today);
+  localStorage.setItem("balance", 0);
+  localStorage.removeItem("logList");
+}
+  
   let balance = parseInt(localStorage.getItem("balance")) || 0;
   const maxLimit = 200;
   const perTap = 1;
