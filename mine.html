@@ -4,77 +4,125 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard Tambang</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #00c6ff;
+      --secondary: #0072ff;
+      --bg: #f2f8ff;
+      --text: #222;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
-      background-color: #f0f0f0;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
     .dashboard {
-      background: white;
-      border-radius: 10px;
+      background: #ffffff;
+      border-radius: 20px;
       padding: 30px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 420px;
+      width: 90%;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
-      margin-bottom: 20px;
+      color: var(--secondary);
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .balance {
+      font-size: 20px;
+      margin: 10px 0 20px;
+      font-weight: bold;
     }
 
     .progress-bar {
-      height: 20px;
+      height: 16px;
       width: 100%;
-      background: #ddd;
+      background: #eee;
       border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
     .progress-bar-inner {
       height: 100%;
       width: 0%;
-      background-color: #00aaff;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
       transition: width 0.3s ease;
     }
 
     button {
-      padding: 15px 30px;
+      padding: 14px 30px;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      margin: 10px;
+      margin: 10px auto;
+      display: block;
+      width: 100%;
+      transition: 0.2s ease;
+      font-weight: 600;
     }
 
     .mine {
-      background-color: #007bff;
-      color: white;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: #fff;
+    }
+
+    .mine:hover {
+      opacity: 0.9;
     }
 
     .withdraw {
-      background-color: #28a745;
+      background: #10b981;
       color: white;
     }
 
     .withdraw:disabled {
-      background-color: #aaa;
+      background: #ccc;
+      color: #666;
       cursor: not-allowed;
     }
 
     #message {
-      margin-top: 15px;
+      font-size: 14px;
+      margin-top: 16px;
       color: #555;
+    }
+
+    @media (max-width: 500px) {
+      .dashboard {
+        padding: 20px;
+      }
+
+      button {
+        padding: 12px 20px;
+        font-size: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
     <h2>💎 Tambang Uang</h2>
-    <p>Saldo: Rp <span id="balance">0</span></p>
+    <div class="balance">Saldo: Rp <span id="balance">0</span></div>
 
     <div class="progress-bar">
       <div class="progress-bar-inner" id="progress"></div>
@@ -84,6 +132,7 @@
     <button class="withdraw" id="withdrawBtn" onclick="withdraw()" disabled>💰 Tarik</button>
 
     <p id="message">Klik tombol tambang untuk menghasilkan uang!</p>
+     <p id="message">Capai Rp1000 untuk membuka tombol Tarik</p>
   </div>
 
   <script>
@@ -110,7 +159,7 @@
         }
 
         if (balance >= balanceTarget) {
-          message.textContent = "✅ Target maksimal Rp2.000 tercapai!";
+          message.textContent = "✅ Limit maksimal Rp2.000 tercapai!\n Untuk menambah limit silahkan Upgrade Pickaxe kamu!";
         }
       }
     }
