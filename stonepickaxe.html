@@ -170,14 +170,14 @@
 </head>
 <body>
 
-<header>💎BigCatMine - Dashboard</header>
+<header>💎STONE PICKAXE - Dashboard</header>
 
 <div class="dashboard">
   <div class="saldo-container">
     <div class="progress-bar-container">
       <div id="progressBar" class="progress-bar"></div>
     </div>
-    <div class="saldo">Saldo: <span id="saldo">Rp0/200</span></div>
+    <div class="saldo">Saldo: <span id="saldo">Rp0</span></div>
   </div>
 
   <div class="button-group">
@@ -221,9 +221,9 @@ if (lastVisit !== todayWIB) {
 }
 
 let balance = parseInt(localStorage.getItem("balance")) || 0;
-const maxLimit = 200;
-const perTap = 1;
-const unlockWithdraw = 200;
+const maxLimit = 5000;
+const perTap = 3;
+const unlockWithdraw = 1;
 let telegramId = localStorage.getItem("telegramId") || "";
 const withdrawButton = document.getElementById("withdrawButton");
 
