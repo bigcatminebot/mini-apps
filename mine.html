@@ -244,7 +244,12 @@ function mine() {
 
   // Jalankan saat awal load juga
   updateProgressBar();
-
+  if (balance >= maxLimit) {
+    if (confirm("Upgrade pickaxe untuk menambah limit?")) {
+      window.location.href = 'upgrade-pickaxe.html';
+    } else {
+      alert("Silakan kembali besok untuk menambang lagi.");
+    }
     return;
   }
 
@@ -262,13 +267,10 @@ function mine() {
     unlockWithdrawButton();
   }
 
-   if (balance >= maxLimit) {
-    if (confirm("Limit harian tercapai! Upgrade pickaxe untuk menambah limit?")) {
-      window.location.href = 'upgrade-pickaxe.html';
-    } else {
-      alert("Silakan kembali besok untuk menambang lagi.");
-    }
-
+  if (balance >= maxLimit) {
+    alert("⚠️ Kamu sudah mencapai limit harian.");
+    window.location.href = "#";
+  }
 }
 
 function unlockWithdrawButton() {
