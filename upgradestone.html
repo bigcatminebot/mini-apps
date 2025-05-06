@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pickaxe Saya</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #0e1b2b;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      color: #00d4ff;
+      margin-top: 40px;
+    }
+
+    .pickaxe-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .pickaxe-card {
+      background-color: #122436;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+    }
+
+    .pickaxe-card h2 {
+      margin: 0 0 10px 0;
+      color: #00c3ff;
+    }
+
+    .pickaxe-card p {
+      margin: 5px 0;
+    }
+
+    .pickaxe-card button {
+      margin-top: 10px;
+      padding: 10px 16px;
+      background-color: #00c3ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .pickaxe-card button:hover {
+      background-color: #0099cc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Upgrade Pickaxe</h1>
+<div class="pickaxe-container">
+  <div class="pickaxe-card">
+    <h2>🪨 Stone</h2>
+    <p>Limit: Rp3.000</p>
+    <p>Per Tap: Rp3</p>
+    <button onclick="selectPickaxe('stone')">Pilih</button>
+  </div>
+
+<script>
+  function selectPickaxe(type) {
+    localStorage.setItem("pickaxe", type);
+    alert("✅ Pickaxe " + type.charAt(0).toUpperCase() + type.slice(1) + " berhasil dipilih!");
+    window.location.href = "dashboard.html"; // Ganti sesuai halaman utama
+  }
+  const pickaxe = "stone";
+const maxLimit = 3000;
+const perTap = 3;
+</script>
+
+</body>
+</html>
