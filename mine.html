@@ -3,176 +3,171 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard Tambang</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+  <title>Dashboard Mining</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #00c6ff;
-      --secondary: #0072ff;
-      --bg: #f2f8ff;
-      --text: #222;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      color: var(--text);
+      background: linear-gradient(to right, #1f4037, #99f2c8);
+      color: #fff;
+      padding: 20px;
+    }
+
+    header {
+      background-color: #0f2027;
+      padding: 15px 20px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      font-size: 20px;
+      color: #00ffe0;
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #ffffffcc;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: #00ffe0;
     }
 
     .dashboard {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 420px;
-      width: 90%;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      margin-top: 30px;
       text-align: center;
-      animation: fadeIn 0.8s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .pickaxe-anim {
+      width: 120px;
+      height: 120px;
+      margin: 20px auto;
+      background: url('https://cdn-icons-png.flaticon.com/512/2234/2234376.png') no-repeat center center/contain;
+      animation: shake 0.3s ease infinite;
     }
 
-    h2 {
-      color: var(--secondary);
-      font-size: 24px;
-      margin-bottom: 10px;
+    @keyframes shake {
+      0% { transform: rotate(0deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    #mineBtn {
+      padding: 14px 32px;
+      font-size: 18px;
+      background: #00c6ff;
+      background: linear-gradient(to right, #0072ff, #00c6ff);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 198, 255, 0.3);
+      transition: 0.2s ease;
+    }
+
+    #mineBtn:active {
+      transform: scale(0.95);
     }
 
     .balance {
-      font-size: 20px;
-      margin: 10px 0 20px;
-      font-weight: bold;
+      font-size: 22px;
+      margin-top: 15px;
     }
 
-    .progress-bar {
-      height: 16px;
-      width: 100%;
-      background: #eee;
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 25px;
-    }
-
-    .progress-bar-inner {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-      transition: width 0.3s ease;
-    }
-
-    button {
-      padding: 14px 30px;
+    .withdraw-btn {
+      margin-top: 20px;
+      padding: 12px 26px;
       font-size: 16px;
+      background-color: #555;
       border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      margin: 10px auto;
-      display: block;
-      width: 100%;
-      transition: 0.2s ease;
-      font-weight: 600;
-    }
-
-    .mine {
-      background: linear-gradient(to right, #00c6ff, #0072ff);
-      color: #fff;
-    }
-
-    .mine:hover {
-      opacity: 0.9;
-    }
-
-    .withdraw {
-      background: #10b981;
       color: white;
-    }
-
-    .withdraw:disabled {
-      background: #ccc;
-      color: #666;
+      border-radius: 8px;
       cursor: not-allowed;
+      opacity: 0.6;
     }
 
-    #message {
-      font-size: 14px;
-      margin-top: 16px;
-      color: #555;
+    .withdraw-btn.active {
+      background-color: #28a745;
+      cursor: pointer;
+      opacity: 1;
     }
 
-    @media (max-width: 500px) {
-      .dashboard {
-        padding: 20px;
+    @media (max-width: 768px) {
+      nav a {
+        margin-left: 10px;
+        font-size: 14px;
       }
 
-      button {
-        padding: 12px 20px;
-        font-size: 15px;
+      .pickaxe-anim {
+        width: 100px;
+        height: 100px;
+      }
+
+      #mineBtn {
+        font-size: 16px;
+        width: 80%;
       }
     }
   </style>
 </head>
 <body>
   <div class="dashboard">
-    <h2>💎 Tambang Uang</h2>
-    <div class="balance">Saldo: Rp <span id="balance">0/1000</span></div>
-
-    <div class="progress-bar">
-      <div class="progress-bar-inner" id="progress"></div>
-    </div>
-
-    <button class="mine" onclick="mine()">⛏️ Tambang</button>
-    <button class="withdraw" id="withdrawBtn" onclick="withdraw()" disabled>💰 Tarik</button>
-
-    <p id="message">Klik tombol tambang untuk menghasilkan uang!</p>
-     <p id="message">Perhatian : Jika terefresh saldo kamu akan ter reset! jangan gunakan auto klik!</p>
+    <div class="pickaxe-anim"></div>
+    <button id="mineBtn" onclick="handleMining()">🪓 Tambang</button>
+    <div class="balance">Saldo: Rp<span id="balance">0</span></div>
+    <button id="withdrawBtn" class="withdraw-btn" disabled>🔒 Tarik Dana</button>
   </div>
 
   <script>
-    let balance = 0;
-    const balanceTarget = 10;
-    const withdrawUnlock = 10;
+    let currentBalance = 0;
+    let currentLimit = 1000;
+    let currentPerTap = 1;
 
-    const balanceDisplay = document.getElementById("balance");
-    const progressBar = document.getElementById("progress");
+    const balanceEl = document.getElementById("balance");
     const withdrawBtn = document.getElementById("withdrawBtn");
-    const message = document.getElementById("message");
 
-    function mine() {
-      if (balance < balanceTarget) {
-        balance += 1;
-        balanceDisplay.textContent = balance;
-
-        let percentage = (balance / balanceTarget) * 100;
-        progressBar.style.width = percentage + "%";
-
-        if (balance >= withdrawUnlock) {
-          withdrawBtn.disabled = false;
-          message.textContent = "🎉 Kamu bisa menarik uang sekarang!";
-        }
-
-        if (balance >= balanceTarget) {
-          message.textContent = "✅ Limit maksimal Rp1.000 tercapai!\n Untuk menambah limit silahkan Upgrade Pickaxe kamu!";
-        }
+    function updateBalanceDisplay() {
+      balanceEl.textContent = currentBalance.toLocaleString();
+      if (currentBalance >= 1000) {
+        withdrawBtn.classList.add("active");
+        withdrawBtn.disabled = false;
+        withdrawBtn.innerText = "💸 Tarik Dana";
+        withdrawBtn.onclick = () => {
+          alert("Silakan Screenshot halaman ini & tarik dana melalui admin.");
+        };
       }
     }
 
-    function withdraw() {
-      if (balance >= withdrawUnlock) {
-        alert("Penarikan Rp" + balance + " berhasil!\nSilahkan simpan bukti ini untuk mengclaim sebagai uang tunai dimenu penarikan!");
-        // reset
-        balance = 0;
-        balanceDisplay.textContent = balance;
-        progressBar.style.width = "0%";
-        withdrawBtn.disabled = true;
-        message.textContent = "Klik tombol tambang untuk menghasilkan uang!";
+    function checkUpgradeNeeded() {
+      if (currentBalance >= currentLimit) {
+        setTimeout(() => {
+          if (confirm("⚠️ Kamu telah mencapai limit saldo.\nSilahkan upgrade Pickaxe untuk melanjutkan?")) {
+            window.location.href = "upgrade-pickaxe.html";
+          }
+        }, 400);
+      }
+    }
+
+    function handleMining() {
+      if (currentBalance < currentLimit) {
+        currentBalance += currentPerTap;
+        updateBalanceDisplay();
+        checkUpgradeNeeded();
+      } else {
+        checkUpgradeNeeded();
       }
     }
   </script>
