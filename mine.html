@@ -282,10 +282,17 @@ updateProgressBar();
     withdrawButton.onclick = withdraw;
   }
 
-  function withdraw() {
-    const waktu = new Date().toLocaleTimeString('id-ID');
-    alert(`🎉 Penarikan berhasil!\n\nUser ID: ${telegramId}\nJumlah: Rp${balance}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin`);
-  }
+ function withdraw() {
+  if (withdrawButton.disabled) return; // Jika sudah disabled, hentikan
+
+  const waktu = new Date().toLocaleTimeString('id-ID');
+  alert(`🎉 Penarikan berhasil!\n\nUser ID: ${telegramId}\nJumlah: Rp${balance}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin`);
+
+  withdrawButton.disabled = true;
+  withdrawButton.classList.remove("active");
+  withdrawButton.onclick = null;
+}
+
 
   function addLog(message) {
     const log = document.getElementById("progressLog");
