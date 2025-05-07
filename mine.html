@@ -101,12 +101,21 @@
     }
 
     #upgradePickaxeButton {
-      background: #ff9800; /* Warna untuk upgrade pickaxe */
+      background: #ffb300;
       color: white;
     }
 
     #upgradePickaxeButton:hover {
-      background: #e68900; /* Warna saat hover */
+      background: #e69300;
+    }
+
+    #redeemButton {
+      background: #ff4081;
+      color: white;
+    }
+
+    #redeemButton:hover {
+      background: #e8366a;
     }
 
     .progress-log-wrapper {
@@ -233,8 +242,11 @@
   <div class="button-group">
     <button id="mineButton" onclick="mine()">🔨 Tambang</button>
     <button id="withdrawButton" disabled>💰 Tarik</button>
-    <button id="redeemButton">🎁 Redeem</button>
-    <button id="upgradePickaxeButton" onclick="upgradePickaxe()">⚒️ Upgrade Pickaxe</button> <!-- Tombol upgrade pickaxe -->
+  </div>
+
+  <div class="button-group">
+    <button id="upgradePickaxeButton" onclick="upgradePickaxe()">🛠️ Upgrade Pickaxe</button>
+    <button id="redeemButton" onclick="redeemCode()">🎁 Redeem</button>
   </div>
 
   <div class="progress-log-wrapper">
@@ -338,12 +350,11 @@ function unlockWithdrawButton() {
   withdrawButton.disabled = false;
   withdrawButton.classList.add("active");
   withdrawButton.onclick = withdraw;
-
   localStorage.setItem("withdrawButtonActive", "true");
 }
 
 function withdraw() {
-  if (withdrawButton.disabled) return; 
+  if (withdrawButton.disabled) return;
 
   const waktu = new Date().toLocaleTimeString('id-ID');
   alert(`🎉 Penarikan berhasil!\n\nUser ID: ${telegramId}\nJumlah: Rp${balance}\nWaktu: ${waktu}\n\nSilakan screenshot halaman ini dan kirim ke admin @bigcatmine_admin`);
@@ -381,16 +392,16 @@ function submitTelegramId() {
   document.getElementById("overlay").style.display = "none";
 }
 
+function redeemCode() {
+  document.getElementById("redeemOverlay").style.display = "flex";
+}
+
 const redeemCodes = {
   "ST0N35021EQR": "https://bigcatminebot.github.io/mini-apps/stonepickaxe.html",
   "1R0N452201IUY": "https://bigcatminebot.github.io/mini-apps/ironpickaxe.html",
   "G0LD4P1889PQ": "https://bigcatminebot.github.io/mini-apps/goldpickaxe",
   "D14MONDP990EQ": "https://bigcatminebot.github.io/mini-apps/diamondpickaxe.html"
 };
-
-document.getElementById("redeemButton").addEventListener("click", function() {
-  document.getElementById("redeemOverlay").style.display = "flex";
-});
 
 function submitRedeemCode() {
   const code = document.getElementById("redeemCodeInput").value.trim().toUpperCase();
@@ -402,7 +413,7 @@ function submitRedeemCode() {
 }
 
 function upgradePickaxe() {
-  window.location.href = 'upgrade-pickaxe.html'; // Arahkan ke halaman upgrade pickaxe
+  window.location.href = "upgrade-pickaxe.html";
 }
 </script>
 
