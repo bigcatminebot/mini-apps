@@ -135,14 +135,13 @@
       }
     }
 
-    /* QRIS Modal */
-    #qrisModal {
+    /* QRIS modal styles */
+    .qris-modal {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(4px);
       justify-content: center;
       align-items: center;
       z-index: 9999;
@@ -152,39 +151,45 @@
       background: #1c1f26;
       padding: 20px;
       border-radius: 16px;
-      max-width: 300px;
-      width: 90%;
+      max-width: 400px;
       text-align: center;
       position: relative;
     }
 
     .qris-content img {
-      width: 100%;
+      max-width: 100%;
       border-radius: 12px;
-      margin-bottom: 10px;
+      margin: 20px 0;
     }
 
-    .qris-content button.close {
+    .qris-content button {
+      margin-top: 20px;
+      background: #00d4ff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-btn {
       position: absolute;
       top: 10px;
-      right: 10px;
-      background: transparent;
-      color: white;
-      border: none;
+      right: 14px;
+      color: #fff;
       font-size: 20px;
       cursor: pointer;
+    }
+
+    #nominalQris {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 10px;
+      color: #ffd700;
     }
   </style>
 </head>
 <body>
-
-  <header>
-    <div class="logo">BigCatMine</div>
-    <nav>
-      <a href="#">Beranda</a>
-      <a href="#">Profil</a>
-    </nav>
-  </header>
 
   <div class="container">
     <h2>💎 Pilih Pickaxe untuk Upgrade</h2>
@@ -234,46 +239,41 @@
   </div>
 
   <!-- QRIS Modal -->
-  <div id="qrisModal">
+  <div class="qris-modal" id="qrisModal">
     <div class="qris-content">
-      <button class="close" onclick="tutupQris()">&times;</button>
-      <h3 id="judulQris">Pembayaran</h3>
-      <img src="qris.png" alt="QRIS">
-      <p id="deskripsiQris"></p>
-      <p id="nominalQris" style="font-weight:bold; color:#ffd700;"></p>
+      <div class="close-btn" onclick="tutupQris()">&times;</div>
+      <h3 id="judulQris">Pickaxe</h3>
+      <p id="deskripsiQris">...</p>
+      <img src="https://via.placeholder.com/300x300.png?text=QRIS+Code" alt="QRIS" />
+      <div id="nominalQris">Total: Rp</div>
+      <button onclick="tutupQris()">Tutup</button>
     </div>
   </div>
 
   <script>
     const dataPickaxe = {
-      stone: {
-        nama: "Pickaxe Stone",
-        harga: 15000,
-        deskripsi: "Upgrade ke Pickaxe Stone seharga Rp15.000"
-      },
-      iron: {
-        nama: "Pickaxe Iron",
-        harga: 25000,
-        deskripsi: "Upgrade ke Pickaxe Iron seharga Rp25.000"
-      },
-      gold: {
-        nama: "Pickaxe Gold",
-        harga: 50000,
-        deskripsi: "Upgrade ke Pickaxe Gold seharga Rp50.000"
-      },
-      diamond: {
-        nama: "Pickaxe Diamond",
-        harga: 100000,
-        deskripsi: "Upgrade ke Pickaxe Diamond seharga Rp100.000"
-      }
+      stone: { nama: "Pickaxe Stone", harga: 15000 },
+      iron: { nama: "Pickaxe Iron", harga: 25000 },
+      gold: { nama: "Pickaxe Gold", harga: 50000 },
+      diamond: { nama: "Pickaxe Diamond", harga: 100000 }
     };
+
+    function generateKodeUnik() {
+      return Math.floor(Math.random() * 900) + 100; // 100-999
+    }
 
     function beliPickaxe(tipe) {
       const data = dataPickaxe[tipe];
       if (data) {
+        const kodeUnik = generateKodeUnik();
+        const totalBayar = data.harga + kodeUnik;
+
         document.getElementById('judulQris').innerText = data.nama;
-        document.getElementById('deskripsiQris').innerText = data.deskripsi;
-        document.getElementById('nominalQris').innerText = "Rp" + data.harga.toLocaleString('id-ID');
+        document.getElementById('deskripsiQris').innerHTML = `
+          Silakan transfer sebesar <strong style="color:#ffd700">Rp${totalBayar.toLocaleString('id-ID')}</strong> ke QRIS berikut.<br>
+          <br><em>Pastikan nominal sesuai agar sistem dapat memverifikasi otomatis.</em>
+        `;
+        document.getElementById('nominalQris').innerText = "Total: Rp" + totalBayar.toLocaleString('id-ID');
         document.getElementById('qrisModal').style.display = 'flex';
       }
     }
