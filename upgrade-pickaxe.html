@@ -134,9 +134,57 @@
         width: 100%;
       }
     }
+
+    /* QRIS Modal */
+    #qrisModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .qris-content {
+      background: #1c1f26;
+      padding: 20px;
+      border-radius: 16px;
+      max-width: 300px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+    }
+
+    .qris-content img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .qris-content button.close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      color: white;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
+
+  <header>
+    <div class="logo">BigCatMine</div>
+    <nav>
+      <a href="#">Beranda</a>
+      <a href="#">Profil</a>
+    </nav>
+  </header>
 
   <div class="container">
     <h2>💎 Pilih Pickaxe untuk Upgrade</h2>
@@ -185,15 +233,53 @@
     </div>
   </div>
 
+  <!-- QRIS Modal -->
+  <div id="qrisModal">
+    <div class="qris-content">
+      <button class="close" onclick="tutupQris()">&times;</button>
+      <h3 id="judulQris">Pembayaran</h3>
+      <img src="qris.png" alt="QRIS">
+      <p id="deskripsiQris"></p>
+      <p id="nominalQris" style="font-weight:bold; color:#ffd700;"></p>
+    </div>
+  </div>
+
   <script>
+    const dataPickaxe = {
+      stone: {
+        nama: "Pickaxe Stone",
+        harga: 15000,
+        deskripsi: "Upgrade ke Pickaxe Stone seharga Rp15.000"
+      },
+      iron: {
+        nama: "Pickaxe Iron",
+        harga: 25000,
+        deskripsi: "Upgrade ke Pickaxe Iron seharga Rp25.000"
+      },
+      gold: {
+        nama: "Pickaxe Gold",
+        harga: 50000,
+        deskripsi: "Upgrade ke Pickaxe Gold seharga Rp50.000"
+      },
+      diamond: {
+        nama: "Pickaxe Diamond",
+        harga: 100000,
+        deskripsi: "Upgrade ke Pickaxe Diamond seharga Rp100.000"
+      }
+    };
+
     function beliPickaxe(tipe) {
-      const links = {
-        stone: "https://t.me/bigcatmine_admin?text=Hallo%20min,%20saya%20ingin%20mengupgrade%20ke%20Pickaxe%20Stone.",
-        iron: "https://t.me/bigcatmine_admin?text=Hallo%20min,%20saya%20ingin%20mengupgrade%20ke%20Pickaxe%20Iron.",
-        gold: "https://t.me/bigcatmine_admin?text=Hallo%20min,%20saya%20ingin%20mengupgrade%20ke%20Pickaxe%Gold.",
-        diamond: "https://t.me/bigcatmine_admin?text=Hallo%20min,%20saya%20ingin%20mengupgrade%20ke%20Pickaxe%20Diamond."
-      };
-      window.location.href = links[tipe];
+      const data = dataPickaxe[tipe];
+      if (data) {
+        document.getElementById('judulQris').innerText = data.nama;
+        document.getElementById('deskripsiQris').innerText = data.deskripsi;
+        document.getElementById('nominalQris').innerText = "Rp" + data.harga.toLocaleString('id-ID');
+        document.getElementById('qrisModal').style.display = 'flex';
+      }
+    }
+
+    function tutupQris() {
+      document.getElementById('qrisModal').style.display = 'none';
     }
   </script>
 
