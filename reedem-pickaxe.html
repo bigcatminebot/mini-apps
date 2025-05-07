@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Redeem Code Pickaxe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0f2027;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .box {
+      background: #1c1f26;
+      padding: 30px 40px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .box h2 {
+      color: #00d4ff;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #00d4ff;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00b2d6;
+    }
+
+    .error {
+      margin-top: 12px;
+      color: #ff6b6b;
+    }
+
+    .loading {
+      margin-top: 12px;
+      color: #00d4ff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>Masukkan Kode Redeem</h2>
+    <input type="text" id="redeemInput" placeholder="Contoh: IRON2025" />
+    <button onclick="cekKode()">Redeem</button>
+    <div class="loading" id="loadingMsg" style="display:none;">🔄 Memeriksa kode...</div>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+    const kodeValid = {
+      "ST0N35021EQR": "https://bigcatminebot.github.io/mini-apps/stonepickaxe.html",
+      "1R0N452201IUY": "https://bigcatminebot.github.io/mini-apps/ironpickaxe.html",
+      "G0LD4P1889PQ": "https://bigcatminebot.github.io/mini-apps/goldpickaxe",
+      "D14MONDP990EQ": "https://bigcatminebot.github.io/mini-apps/diamondpickaxe.html"
+    };
+
+    function cekKode() {
+      const kode = document.getElementById('redeemInput').value.trim().toUpperCase();
+      const errorBox = document.getElementById('errorMsg');
+      const loadingBox = document.getElementById('loadingMsg');
+
+      errorBox.textContent = "";
+      loadingBox.style.display = "none";
+
+      if (!kode) {
+        errorBox.textContent = "Silakan masukkan kode terlebih dahulu.";
+        return;
+      }
+
+      if (kodeValid[kode]) {
+        loadingBox.style.display = "block";
+
+        setTimeout(() => {
+          window.location.href = kodeValid[kode];
+        }, 1500); // Simulasi loading sebelum redirect
+      } else {
+        errorBox.textContent = "Kode tidak valid. Silakan coba lagi.";
+      }
+    }
+  </script>
+
+</body>
+</html>
