@@ -166,6 +166,44 @@
       cursor: pointer;
       font-weight: bold;
     }
+
+    /* Styling untuk Popup Notifikasi Diamond Pickaxe */
+    #diamondPopup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #diamondPopupContent {
+      background: #1b2f45;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      color: white;
+      max-width: 90%;
+    }
+
+    #diamondPopupContent h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #00d4ff;
+    }
+
+    #diamondPopupContent button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background: #00c3ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -198,6 +236,14 @@
     <input type="text" id="telegramIdInput" placeholder="@username">
     <br>
     <button onclick="submitTelegramId()">Lanjutkan</button>
+  </div>
+</div>
+
+<!-- Popup Notifikasi Diamond Pickaxe -->
+<div id="diamondPopup">
+  <div id="diamondPopupContent">
+    <h2>CONGRATS! DIAMOND PICKAXE UNLOCKED</h2>
+    <button onclick="closeDiamondPopup()">Tutup</button>
   </div>
 </div>
 
@@ -260,6 +306,11 @@ function mine() {
     alert("⚠️ Kamu sudah mencapai limit harian.");
     window.location.href = "#";
   }
+
+  // Menampilkan popup Diamond Pickaxe setelah mencapai target tertentu
+  if (balance >= 5000) { // Gantilah sesuai dengan batas unlock Diamond Pickaxe
+    showDiamondPopup();
+  }
 }
 
 function unlockWithdrawButton() {
@@ -309,6 +360,15 @@ function submitTelegramId() {
   telegramId = input;
   localStorage.setItem("telegramId", telegramId);
   document.getElementById("overlay").style.display = "none";
+}
+
+// Fungsi untuk menampilkan popup notifikasi
+function showDiamondPopup() {
+  document.getElementById("diamondPopup").style.display = "flex";
+}
+
+function closeDiamondPopup() {
+  document.getElementById("diamondPopup").style.display = "none";
 }
 
 // Periksa status tombol tarik setelah halaman dimuat
