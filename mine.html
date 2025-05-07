@@ -166,6 +166,47 @@
       cursor: pointer;
       font-weight: bold;
     }
+
+    #redeemOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #redeemPopup {
+      background: #1b2f45;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      color: white;
+      max-width: 90%;
+    }
+
+    #redeemPopup input {
+      padding: 10px;
+      margin-top: 12px;
+      width: 80%;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+
+    #redeemPopup button {
+      margin-top: 16px;
+      padding: 10px 20px;
+      background: #00c3ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -183,6 +224,7 @@
   <div class="button-group">
     <button id="mineButton" onclick="mine()">🔨 Tambang</button>
     <button id="withdrawButton" disabled>💰 Tarik</button>
+    <button id="redeemButton">🎁 Redeem</button>
   </div>
 
   <div class="progress-log-wrapper">
@@ -198,6 +240,16 @@
     <input type="text" id="telegramIdInput" placeholder="@username">
     <br>
     <button onclick="submitTelegramId()">Lanjutkan</button>
+  </div>
+</div>
+
+<!-- Popup Redeem Code -->
+<div id="redeemOverlay">
+  <div id="redeemPopup">
+    <h2>Masukkan Kode Redeem</h2>
+    <input type="text" id="redeemCodeInput" placeholder="Kode Redeem" />
+    <br>
+    <button onclick="submitRedeemCode()">Gunakan Kode</button>
   </div>
 </div>
 
@@ -322,20 +374,26 @@ function submitTelegramId() {
   document.getElementById("overlay").style.display = "none";
 }
 
-// Periksa status tombol tarik setelah halaman dimuat
-document.addEventListener("DOMContentLoaded", function() {
-  const withdrawButtonStatus = localStorage.getItem("withdrawButtonActive");
+// Redeem Code functionality
+const redeemCodes = {
+  "ST0N35021EQR": "https://bigcatminebot.github.io/mini-apps/stonepickaxe.html",
+      "1R0N452201IUY": "https://bigcatminebot.github.io/mini-apps/ironpickaxe.html",
+      "G0LD4P1889PQ": "https://bigcatminebot.github.io/mini-apps/goldpickaxe",
+      "D14MONDP990EQ": "https://bigcatminebot.github.io/mini-apps/diamondpickaxe.html"
+};
 
-  if (withdrawButtonStatus === "false") {
-    withdrawButton.disabled = true;
-    withdrawButton.classList.remove("active");
-    withdrawButton.onclick = null;
-  } else if (withdrawButtonStatus === "true") {
-    withdrawButton.disabled = false;
-    withdrawButton.classList.add("active");
-    withdrawButton.onclick = withdraw;
-  }
+document.getElementById("redeemButton").addEventListener("click", function() {
+  document.getElementById("redeemOverlay").style.display = "flex";
 });
+
+function submitRedeemCode() {
+  const code = document.getElementById("redeemCodeInput").value.trim().toUpperCase();
+  if (redeemCodes[code]) {
+    window.location.href = redeemCodes[code];
+  } else {
+    alert("❌ Kode tidak valid.");
+  }
+}
 </script>
 
 </body>
