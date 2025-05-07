@@ -5,40 +5,76 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Topup Mobile Legends</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .diamond-box, .qris-box {
+      @apply border rounded p-4 text-center cursor-pointer transition-all duration-300 shadow hover:shadow-lg hover:bg-blue-100;
+    }
+    .diamond-box.selected, .qris-box.selected {
+      @apply border-blue-500 bg-blue-50 ring-2 ring-blue-400;
+    }
+  </style>
   <script>
-    function fetchNickname() {
+    let selectedDiamond = null;
+    let selectedPayment = null;
+
+    function selectDiamond(value, element) {
+      document.querySelectorAll('.diamond-box').forEach(box => box.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedDiamond = value;
+    }
+
+    function selectPayment(value, element) {
+      document.querySelectorAll('.qris-box').forEach(box => box.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedPayment = value;
+    }
+
+    async function fetchNickname() {
       const id = document.getElementById('user_id').value;
       const zone = document.getElementById('zone_id').value;
       const nickname = document.getElementById('nickname');
-      // Simulasi pencarian nickname
-      if (id && zone) {
-        nickname.value = `Nickname_${id}_${zone}`;
+
+      if (!id || !zone) return;
+
+      try {
+        if (id.length >= 5 && zone.length >= 3) {
+          nickname.value = `Nickname_${id.slice(-3)}`;
+        } else {
+          nickname.value = '';
+          alert('User ID atau Zone ID salah!');
+        }
+      } catch (error) {
+        nickname.value = '';
+        alert('Gagal mengambil nickname.');
       }
     }
 
     function konfirmasi() {
-      const uid = document.getElementById('user_id').value;
-      const zone = document.getElementById('zone_id').value;
-      const nickname = document.getElementById('nickname').value;
-      const hp = document.getElementById('hp').value;
-      const promo = document.getElementById('kode_promo').value;
-      const pembayaran = document.getElementById('pembayaran').value;
-      const diamond = document.getElementById('diamond').value;
+      const uid = document.getElementById('user_id').value.trim();
+      const zone = document.getElementById('zone_id').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
+      const hp = document.getElementById('hp').value.trim();
+      const promo = document.getElementById('kode_promo').value.trim();
 
-      const randomUnique = Math.floor(Math.random() * 900 + 100); // 3 digit unik
+      if (!uid || !zone || !nickname || !hp || !selectedDiamond || !selectedPayment) {
+        alert("Semua kolom wajib diisi!");
+        return;
+      }
+
+      const randomUnique = Math.floor(Math.random() * 900 + 100);
       const harga = {"86": 10000, "172": 18000, "344": 35000};
-      const diskon = promo === "PROMO50" ? 0.5 : 1;
-      const total = harga[diamond] * diskon + randomUnique;
+      const diskon = promo === "ILEGAL50" ? 0.5 : 1;
+      const total = harga[selectedDiamond] * diskon + randomUnique;
 
       document.getElementById('popup_data').innerHTML = `
         <p><strong>User ID:</strong> ${uid}</p>
         <p><strong>Zone ID:</strong> ${zone}</p>
         <p><strong>Nickname:</strong> ${nickname}</p>
         <p><strong>No HP:</strong> ${hp}</p>
-        <p><strong>Jumlah Diamond:</strong> ${diamond}</p>
-        <p><strong>Metode Pembayaran:</strong> ${pembayaran}</p>
+        <p><strong>Jumlah Diamond:</strong> ${selectedDiamond}</p>
+        <p><strong>Metode Pembayaran:</strong> ${selectedPayment}</p>
         <p><strong>Total Bayar (dengan unik):</strong> Rp${total}</p>
-        <img src="/qris.jpg" alt="QRIS" class="w-40 mt-2">
+        <img src="/qris.jpg" alt="QRIS" class="w-40 mt-2 mx-auto animate-pulse">
         <button onclick="window.location.href='invoice_'+Math.floor(Math.random()*10000)+'.html'" class="mt-4 px-4 py-2 bg-green-500 text-white rounded">Lanjut ke Invoice</button>
       `;
       document.getElementById('popup').classList.remove('hidden');
@@ -61,14 +97,16 @@
       <label class="block font-semibold">Nickname</label>
       <input type="text" id="nickname" class="w-full border rounded p-2 bg-gray-100" readonly>
     </div>
+
     <div class="mb-4">
-      <label class="block font-semibold">Pilih Diamond</label>
-      <select id="diamond" class="w-full border rounded p-2">
-        <option value="86">86 Diamond - Rp10.000</option>
-        <option value="172">172 Diamond - Rp18.000</option>
-        <option value="344">344 Diamond - Rp35.000</option>
-      </select>
+      <label class="block font-semibold mb-2">Pilih Diamond</label>
+      <div class="grid grid-cols-3 gap-3">
+        <div class="diamond-box" onclick="selectDiamond('86', this)">86 Diamond<br><span class="text-sm text-gray-600">Rp10.000</span></div>
+        <div class="diamond-box" onclick="selectDiamond('172', this)">172 Diamond<br><span class="text-sm text-gray-600">Rp18.000</span></div>
+        <div class="diamond-box" onclick="selectDiamond('344', this)">344 Diamond<br><span class="text-sm text-gray-600">Rp35.000</span></div>
+      </div>
     </div>
+
     <div class="mb-4">
       <label class="block font-semibold">Nomor HP</label>
       <input type="text" id="hp" class="w-full border rounded p-2" placeholder="Contoh: 08xxxxxxxxxx">
@@ -78,11 +116,15 @@
       <input type="text" id="kode_promo" class="w-full border rounded p-2" placeholder="Contoh: PROMO50">
     </div>
     <div class="mb-4">
-      <label class="block font-semibold">Metode Pembayaran</label>
-      <select id="pembayaran" class="w-full border rounded p-2">
-        <option value="QRIS">QRIS</option>
-      </select>
+      <label class="block font-semibold mb-2">Metode Pembayaran</label>
+      <div class="flex justify-center">
+        <div class="qris-box" onclick="selectPayment('QRIS', this)">
+          <img src="https://xendit.co/wp-content/uploads/2020/03/iconQris.png" alt="QRIS" class="w-20 h-20 mx-auto mb-2 animate-bounce">
+          <span class="block font-semibold">QRIS</span>
+        </div>
+      </div>
     </div>
+
     <button onclick="konfirmasi()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">KONFIRMASI</button>
   </div>
 
